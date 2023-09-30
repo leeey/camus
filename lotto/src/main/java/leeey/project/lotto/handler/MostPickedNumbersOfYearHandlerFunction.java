@@ -29,6 +29,9 @@ public class MostPickedNumbersOfYearHandlerFunction implements HandlerFunction<S
     List<HistoryDto> histories = HistoryUtil.getHistories();
     List<Map<Integer, List<Integer>>> result = new ArrayList<>();
 
+    final String numberKey = "number";
+    final String countKey = "count";
+
     IntStream.rangeClosed(2002, Year.now().getValue())
         .forEach(year -> {
           List<Integer> list = histories.stream()
@@ -38,11 +41,11 @@ public class MostPickedNumbersOfYearHandlerFunction implements HandlerFunction<S
               .collect(Collectors.groupingBy(Integer::intValue))
               .entrySet()
               .stream()
-              .map(entry -> Map.of("number", entry.getKey(), "count", entry.getValue().size()))
-              .sorted((a, b) -> b.get("count").compareTo(a.get("count")))
+              .map(entry -> Map.of(numberKey, entry.getKey(), countKey, entry.getValue().size()))
+              .sorted((a, b) -> b.get(countKey).compareTo(a.get(countKey)))
               .toList()
               .subList(0, 6).stream()
-              .map(map -> map.get("number"))
+              .map(map -> map.get(numberKey))
               .sorted()
               .toList();
 
