@@ -1,4 +1,4 @@
-package leeey.project.lotto.exception;
+package project.laflex.lotto.exception;
 
 public class LottoException extends RuntimeException {
 

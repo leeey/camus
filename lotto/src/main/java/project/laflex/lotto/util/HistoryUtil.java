@@ -1,4 +1,4 @@
-package leeey.project.lotto.util;
+package project.laflex.lotto.util;
 
 import static com.fasterxml.jackson.dataformat.csv.CsvSchema.builder;
 
@@ -8,8 +8,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 import java.io.IOException;
 import java.util.List;
-import leeey.project.lotto.dto.HistoryDto;
-import leeey.project.lotto.exception.LottoException;
+import project.laflex.lotto.dto.HistoryDto;
+import project.laflex.lotto.exception.LottoException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

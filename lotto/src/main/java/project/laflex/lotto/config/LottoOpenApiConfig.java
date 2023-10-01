@@ -1,4 +1,4 @@
-package leeey.project.lotto.config;
+package project.laflex.lotto.config;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
@@ -15,7 +15,7 @@ public class LottoOpenApiConfig {
 
     return GroupedOpenApi.builder()
         .group("lotto")
-        .packagesToScan("leeey.project.lotto")
+        .packagesToScan("project.laflex.lotto")
         .addOpenApiCustomizer(e -> e.info(new Info()
                 .title("Lotto 프로젝트")
                 .version("1.0"))

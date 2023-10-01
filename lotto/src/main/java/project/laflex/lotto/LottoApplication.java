@@ -1,9 +1,9 @@
-package leeey.project.lotto;
+package project.laflex.lotto;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "leeey.project.*")
+@SpringBootApplication(scanBasePackages = "project.laflex.*")
 public class LottoApplication {
 
   public static void main(String[] args) {

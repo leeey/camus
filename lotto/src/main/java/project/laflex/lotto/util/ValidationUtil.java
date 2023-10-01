@@ -1,4 +1,4 @@
-package leeey.project.lotto.util;
+package project.laflex.lotto.util;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidationUtil {
 
-  public static <T> T validateAndGet(T t) {
+  public static <T> void validate(T t) {
 
     try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
       Validator validator = validatorFactory.getValidator();
@@ -23,7 +23,6 @@ public class ValidationUtil {
       if (!violations.isEmpty()) {
         throw new ConstraintViolationException(violations);
       }
-      return t;
     }
   }
 }

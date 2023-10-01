@@ -1,4 +1,4 @@
-package leeey.project.lotto.config;
+package project.laflex.lotto.config;
 
 import lombok.Builder;
 import lombok.Getter;
