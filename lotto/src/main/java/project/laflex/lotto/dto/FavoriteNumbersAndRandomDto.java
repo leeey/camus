@@ -9,8 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.laflex.lotto.exception.LottoException;
-import project.laflex.lotto.util.ValidationUtil;
+import project.laflex.common.exception.LaflexClientException;
+import project.laflex.common.util.ValidationUtil;
 
 @Builder
 @Getter
@@ -31,7 +31,7 @@ public class FavoriteNumbersAndRandomDto {
     ValidationUtil.validate(this);
     favoriteNumbers.forEach(num -> {
       if (num < 1 || num > 45) {
-        throw new LottoException(new IllegalArgumentException("favoriteNumbers is invalid."));
+        throw new LaflexClientException(new IllegalArgumentException("favoriteNumbers is invalid."));
       }
     });
   }

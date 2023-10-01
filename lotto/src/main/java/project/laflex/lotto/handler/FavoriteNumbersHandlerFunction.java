@@ -37,7 +37,7 @@ public class FavoriteNumbersHandlerFunction implements HandlerFunction<ServerRes
             result.add(set);
           }
           log.info("results size : " + result.size());
-          return ResponseWrapper.of(result);
+          return ResponseWrapper.success(result);
         });
   }
 }

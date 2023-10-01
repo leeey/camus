@@ -39,7 +39,7 @@ public class MostNumbersOfYearHandlerFunction implements HandlerFunction<ServerR
           result.add(MostNumbersOfYearDto.builder().year(year).numbers(mostNumbers).build());
         });
 
-    return ResponseWrapper.of(result);
+    return ResponseWrapper.success(result);
   }
 
   private Map<Integer, List<Integer>> getNumberCountMap(int year, List<HistoryDto> histories) {

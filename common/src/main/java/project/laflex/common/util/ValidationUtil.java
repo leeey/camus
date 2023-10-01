@@ -1,4 +1,4 @@
-package project.laflex.lotto.util;
+package project.laflex.common.util;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -9,6 +9,7 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.laflex.common.exception.LaflexClientException;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,7 +22,7 @@ public class ValidationUtil {
       Set<ConstraintViolation<T>> violations = validator.validate(t);
 
       if (!violations.isEmpty()) {
-        throw new ConstraintViolationException(violations);
+        throw new LaflexClientException(new ConstraintViolationException(violations));
       }
     }
   }

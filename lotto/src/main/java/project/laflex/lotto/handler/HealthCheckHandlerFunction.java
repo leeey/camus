@@ -16,6 +16,6 @@ public class HealthCheckHandlerFunction implements HandlerFunction<ServerRespons
   @Override
   public Mono<ServerResponse> handle(@NonNull ServerRequest request) {
 
-    return ResponseWrapper.of(Map.of("status", "OK"));
+    return ResponseWrapper.success(Map.of("status", "OK"));
   }
 }
