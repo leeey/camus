@@ -57,10 +57,10 @@ class ResourceUtilTest extends Specification {
 
         then:
         try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-            def text = FileCopyUtils.copyToString(reader);
+            def text = FileCopyUtils.copyToString(reader)
             text == "Hello!"
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new UncheckedIOException(e)
         }
     }
 }
