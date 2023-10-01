@@ -1,4 +1,5 @@
 rootProject.name = 'laflex'
-include 'lotto'
+include 'webflux'
 include 'common'
+include 'infra'
 

@@ -1,0 +1,15 @@
+plugins {
+    id 'groovy'
+    id 'project.laflex.library-webflux-conventions'
+}
+
+dependencies {
+    implementation(project(':common')) {
+        exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
+    }
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2'
+}
+
+test {
+    useJUnitPlatform()
+}

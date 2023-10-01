@@ -8,10 +8,8 @@ import jakarta.validation.ValidatorFactory;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import project.laflex.common.exception.LaflexClientException;
 
-@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidationUtil {
 
