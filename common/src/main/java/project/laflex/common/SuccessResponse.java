@@ -1,0 +1,13 @@
+package project.laflex.common;
+
+import lombok.Builder;
+import lombok.Getter;
+
+@Builder
+@Getter
+public class SuccessResponse<T> {
+
+  private Long timestamp;
+
+  private T result;
+}

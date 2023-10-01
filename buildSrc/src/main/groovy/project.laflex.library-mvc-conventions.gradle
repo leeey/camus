@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'project.laflex.java-conventions'
+}
+
+group = 'project.laflex'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
