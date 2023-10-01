@@ -1,3 +1,6 @@
+spring:
+  application:
+    name: laflex
 server:
   error:
     include-stacktrace: never
@@ -7,4 +10,3 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-  packages-to-scan: leeey.project.lotto

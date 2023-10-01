@@ -1,4 +1,4 @@
-package leeey.project.lotto.util
+package project.laflex.lotto.util
 
 
 import spock.lang.Specification

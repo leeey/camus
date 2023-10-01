@@ -1,7 +1,7 @@
-package leeey.project.lotto.handler;
+package project.laflex.lotto.handler;
 
 import java.util.Map;
-import leeey.project.lotto.config.ResponseWrapper;
+import project.laflex.lotto.config.ResponseWrapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFunction;

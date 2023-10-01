@@ -1,4 +1,4 @@
-package leeey.project.lotto.dto;
+package project.laflex.lotto.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.laflex.lotto.exception.LottoException;
+import project.laflex.lotto.util.ValidationUtil;
 
 @Builder
 @Getter
@@ -23,4 +25,14 @@ public class FavoriteNumbersAndRandomDto {
   @Max(10)
   @Min(1)
   private Integer resultCount;
+
+  public void validate() {
+
+    ValidationUtil.validate(this);
+    favoriteNumbers.forEach(num -> {
+      if (num < 1 || num > 45) {
+        throw new LottoException(new IllegalArgumentException("favoriteNumbers is invalid."));
+      }
+    });
+  }
 }

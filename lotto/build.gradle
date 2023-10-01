@@ -1,6 +1,6 @@
 plugins {
     id 'groovy'
-    id 'leeey.project.library-conventions'
+    id 'project.laflex.library-conventions'
 }
 
 dependencies {

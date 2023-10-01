@@ -1,15 +1,15 @@
-package leeey.project.lotto.router;
+package project.laflex.lotto.router;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import leeey.project.lotto.config.SuccessResponse;
-import leeey.project.lotto.dto.FavoriteNumbersAndRandomDto;
-import leeey.project.lotto.handler.FavoriteNumbersHandlerFunction;
-import leeey.project.lotto.handler.HealthCheckHandlerFunction;
-import leeey.project.lotto.handler.MostPickedNumbersOfYearHandlerFunction;
+import project.laflex.lotto.config.SuccessResponse;
+import project.laflex.lotto.dto.FavoriteNumbersAndRandomDto;
+import project.laflex.lotto.handler.FavoriteNumbersHandlerFunction;
+import project.laflex.lotto.handler.HealthCheckHandlerFunction;
+import project.laflex.lotto.handler.MostNumbersOfYearHandlerFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.RouterOperation;
@@ -32,7 +32,7 @@ public class LottoRouterFunction {
 
   private final FavoriteNumbersHandlerFunction favoriteNumbersHandlerFunction;
 
-  private final MostPickedNumbersOfYearHandlerFunction mostPickedNumbersOfYearHandlerFunction;
+  private final MostNumbersOfYearHandlerFunction mostNumbersOfYearHandlerFunction;
 
   @RouterOperations({
       @RouterOperation(path = "/health"
@@ -57,11 +57,11 @@ public class LottoRouterFunction {
                   @ApiResponse(responseCode = "404", description = "NOT FOUND")},
               requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = FavoriteNumbersAndRandomDto.class))))
       ),
-      @RouterOperation(path = "/lotto/most-picked-numbers-of-year"
+      @RouterOperation(path = "/lotto/most-numbers-of-year"
           , produces = {
           MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET,
-          beanClass = MostPickedNumbersOfYearHandlerFunction.class, beanMethod = "handle",
-          operation = @Operation(operationId = "getMostPickedNumbersOfYear",
+          beanClass = MostNumbersOfYearHandlerFunction.class, beanMethod = "handle",
+          operation = @Operation(operationId = "getMostNumbersOfYear",
               tags = {"API"},
               responses = {
                   @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
@@ -79,7 +79,7 @@ public class LottoRouterFunction {
             .nest(RequestPredicates.accept(MediaType.APPLICATION_JSON), nestBuilder -> nestBuilder
                 .GET("/health", healthCheckHandlerFunction)
                 .POST("/favorite-nums", favoriteNumbersHandlerFunction)
-                .GET("/most-picked-numbers-of-year", mostPickedNumbersOfYearHandlerFunction)))
+                .GET("/most-numbers-of-year", mostNumbersOfYearHandlerFunction)))
         .build();
   }
 }

@@ -1,4 +1,4 @@
-package leeey.project.lotto.dto;
+package project.laflex.lotto.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
