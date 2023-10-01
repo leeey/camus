@@ -1,0 +1,25 @@
+plugins {
+    id 'groovy'
+    id 'project.laflex.library-webflux-conventions'
+}
+
+dependencies {
+    implementation(project(':common')) {
+        exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'io.r2dbc:r2dbc-h2:1.0.0.RELEASE'
+    implementation 'com.h2database:h2:2.2.224'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
