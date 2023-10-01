@@ -5,11 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import project.laflex.lotto.config.SuccessResponse;
-import project.laflex.lotto.dto.FavoriteNumbersAndRandomDto;
-import project.laflex.lotto.handler.FavoriteNumbersHandlerFunction;
-import project.laflex.lotto.handler.HealthCheckHandlerFunction;
-import project.laflex.lotto.handler.MostNumbersOfYearHandlerFunction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.RouterOperation;
@@ -22,6 +17,13 @@ import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import project.laflex.lotto.config.FailureResponse;
+import project.laflex.lotto.config.ResponseWrapper;
+import project.laflex.lotto.config.SuccessResponse;
+import project.laflex.lotto.dto.FavoriteNumbersAndRandomDto;
+import project.laflex.lotto.handler.FavoriteNumbersHandlerFunction;
+import project.laflex.lotto.handler.HealthCheckHandlerFunction;
+import project.laflex.lotto.handler.MostNumbersOfYearHandlerFunction;
 
 @Slf4j
 @Configuration
@@ -42,8 +44,8 @@ public class LottoRouterFunction {
               tags = {"HealthCheck"},
               responses = {
                   @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-                  @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
-                  @ApiResponse(responseCode = "404", description = "NOT FOUND")})
+                  @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
+                  @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class)))})
       ),
       @RouterOperation(path = "/lotto/favorite-nums"
           , produces = {
@@ -53,8 +55,8 @@ public class LottoRouterFunction {
               tags = {"API"},
               responses = {
                   @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-                  @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
-                  @ApiResponse(responseCode = "404", description = "NOT FOUND")},
+                  @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
+                  @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class)))},
               requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = FavoriteNumbersAndRandomDto.class))))
       ),
       @RouterOperation(path = "/lotto/most-numbers-of-year"
@@ -65,8 +67,8 @@ public class LottoRouterFunction {
               tags = {"API"},
               responses = {
                   @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-                  @ApiResponse(responseCode = "400", description = "BAD REQUEST"),
-                  @ApiResponse(responseCode = "404", description = "NOT FOUND")})
+                  @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
+                  @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class)))})
       )
   })
   @Bean
@@ -80,6 +82,7 @@ public class LottoRouterFunction {
                 .GET("/health", healthCheckHandlerFunction)
                 .POST("/favorite-nums", favoriteNumbersHandlerFunction)
                 .GET("/most-numbers-of-year", mostNumbersOfYearHandlerFunction)))
+        .onError(Exception.class, (exception, request) -> ResponseWrapper.fail(exception))
         .build();
   }
 }

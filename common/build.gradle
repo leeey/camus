@@ -4,10 +4,16 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common')
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2'
 }
 
 test {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }

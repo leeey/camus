@@ -8,10 +8,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 import java.io.IOException;
 import java.util.List;
-import project.laflex.lotto.dto.HistoryDto;
-import project.laflex.lotto.exception.LottoException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import project.laflex.common.exception.LaflexServerException;
+import project.laflex.common.util.ResourceUtil;
+import project.laflex.lotto.dto.HistoryDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class HistoryUtil {
@@ -28,7 +29,7 @@ public class HistoryUtil {
 
       return mappingIterator.readAll();
     } catch (IOException e) {
-      throw new LottoException(e);
+      throw new LaflexServerException(e);
     }
   }
 
