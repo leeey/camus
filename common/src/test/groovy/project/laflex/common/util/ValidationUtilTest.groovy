@@ -11,10 +11,10 @@ class ValidationUtilTest extends Specification {
     static class TestDto {
 
         @NotNull
-        private Integer number;
+        private Integer number
 
         @NotBlank
-        private String comment;
+        private String comment
     }
 
     def "validation fail"() {
