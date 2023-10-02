@@ -6,20 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
-import project.laflex.infra.jpa.model.member.MemberDao
-import project.laflex.infra.jpa.model.member.MemberEntity
 import spock.lang.Specification
 
 @EnableAutoConfiguration
 @DataJpaTest
 @ContextConfiguration(classes = [MemberDao, ObjectMapper])
-class MemberRepositoryTest extends Specification {
+class JpaMemberDaoTest extends Specification {
 
     @Autowired
-    MemberDao memberDao;
+    MemberDao memberDao
 
     @Autowired
-    ObjectMapper objectMapper;
+    ObjectMapper objectMapper
 
     def "test"() {
 

@@ -1,7 +1,7 @@
 package project.laflex.infra.jpa.model;
 
 import jakarta.persistence.MappedSuperclass;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,13 +13,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 public class JpaAuditEntity {
 
   @CreatedDate
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   @CreatedBy
   private String createdBy;
 
   @LastModifiedDate
-  private Timestamp lastModifiedAt;
+  private LocalDateTime lastModifiedAt;
 
   @LastModifiedBy
   private String lastModifiedBy;
