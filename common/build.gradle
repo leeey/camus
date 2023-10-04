@@ -1,7 +1,7 @@
 plugins {
     id 'groovy'
-    id 'project.laflex.library-mvc-conventions'
-    id 'project.laflex.library-webflux-conventions'
+    id 'project.kamus.library-mvc-conventions'
+    id 'project.kamus.library-webflux-conventions'
 }
 
 dependencies {
