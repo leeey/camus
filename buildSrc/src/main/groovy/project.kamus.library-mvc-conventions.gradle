@@ -1,0 +1,11 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'project.kamus.java-conventions'
+}
+
+group = 'project.kamus'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}

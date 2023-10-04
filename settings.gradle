@@ -1,4 +1,4 @@
-rootProject.name = 'laflex'
+rootProject.name = 'kamus'
 include 'webflux'
 include 'common'
 include 'infra'

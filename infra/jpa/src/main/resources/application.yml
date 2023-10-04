@@ -4,7 +4,7 @@ server:
     include-stacktrace: never
 spring:
   application:
-    name: laflex-infra-jpa
+    name: kamus-infra-jpa
   devtools:
     add-properties: false
   datasource:

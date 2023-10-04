@@ -4,7 +4,7 @@ server:
     include-stacktrace: never
 spring:
   application:
-    name: laflex-infra-r2dbc
+    name: kamus-infra-r2dbc
   devtools:
     add-properties: false
   r2dbc:

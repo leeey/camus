@@ -4,7 +4,7 @@ server:
     include-stacktrace: never
 spring:
   application:
-    name: laflex-webflux
+    name: kamus-webflux
   devtools:
     add-properties: false
 springdoc:
