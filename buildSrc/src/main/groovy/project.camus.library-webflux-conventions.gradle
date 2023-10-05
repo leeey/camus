@@ -1,0 +1,13 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'project.camus.java-conventions'
+}
+
+group = 'project.camus'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0'
+    testImplementation 'io.projectreactor:reactor-test'
+}

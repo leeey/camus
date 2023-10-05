@@ -1,4 +1,4 @@
-rootProject.name = 'kamus'
+rootProject.name = 'camus'
 include 'webflux'
 include 'common'
 include 'infra'

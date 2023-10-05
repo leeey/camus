@@ -4,7 +4,7 @@ server:
     include-stacktrace: never
 spring:
   application:
-    name: kamus-infra-jpa
+    name: camus-infra-jpa
   devtools:
     add-properties: false
   datasource:

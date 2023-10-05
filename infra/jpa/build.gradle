@@ -1,6 +1,6 @@
 plugins {
     id 'groovy'
-    id 'project.kamus.library-mvc-conventions'
+    id 'project.camus.library-mvc-conventions'
 }
 
 dependencies {
