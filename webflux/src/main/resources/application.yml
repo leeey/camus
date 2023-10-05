@@ -4,7 +4,7 @@ server:
     include-stacktrace: never
 spring:
   application:
-    name: kamus-webflux
+    name: camus-webflux
   devtools:
     add-properties: false
 springdoc:
