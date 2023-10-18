@@ -9,20 +9,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import project.camus.webflux.app.lotto.dto.request.LottoFavoriteNumbersRequestDto;
 import project.camus.webflux.config.ResponseWrapper;
-import project.camus.webflux.app.lotto.dto.LottoFavoriteNumbersAndRandomDto;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class LottoFavoriteNumbersHandlerFunction implements HandlerFunction<ServerResponse> {
+public class LottoFavoriteNumbersHandler implements HandlerFunction<ServerResponse> {
 
   @NonNull
   @Override
   public Mono<ServerResponse> handle(@NonNull ServerRequest request) {
 
-    return request.bodyToMono(LottoFavoriteNumbersAndRandomDto.class)
-        .doOnNext(LottoFavoriteNumbersAndRandomDto::validate)
+    return request.bodyToMono(LottoFavoriteNumbersRequestDto.class)
+        .doOnNext(LottoFavoriteNumbersRequestDto::validate)
         .flatMap(dto -> {
           Set<Set<Integer>> result = new HashSet<>();
           while (result.size() < dto.getResultCount()) {

@@ -1,4 +1,4 @@
-package project.camus.webflux.app.lotto.dto;
+package project.camus.webflux.app.lotto.dto.response;
 
 import java.util.List;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class LottoMostNumbersOfYearDto {
+public class LottoYearlyMostNumbersResponseDto {
 
   private Integer year;
 
