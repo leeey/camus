@@ -1,16 +1,16 @@
-package project.camus.webflux.app.lotto.handler;
+package project.camus.webflux.app.healthcheck.handler;
 
 import java.util.Map;
-import project.camus.webflux.config.ResponseWrapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import project.camus.webflux.config.ResponseWrapper;
 import reactor.core.publisher.Mono;
 
 @Component
-public class LottoHealthCheckHandlerFunction implements HandlerFunction<ServerResponse> {
+public class HealthCheckHandler implements HandlerFunction<ServerResponse> {
 
   @NonNull
   @Override

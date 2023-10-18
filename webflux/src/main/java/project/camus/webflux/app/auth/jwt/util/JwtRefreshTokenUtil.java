@@ -1,4 +1,4 @@
-package project.camus.webflux.app.lotto.util;
+package project.camus.webflux.app.auth.jwt.util;
 
 import static com.fasterxml.jackson.dataformat.csv.CsvSchema.builder;
 
@@ -12,18 +12,18 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import project.camus.common.exception.CamusServerException;
 import project.camus.common.util.ResourceUtil;
-import project.camus.webflux.app.lotto.dto.LottoHistoryDto;
+import project.camus.webflux.app.auth.jwt.dto.JwtRefreshTokenDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LottoHistoryUtil {
+public class JwtRefreshTokenUtil {
 
-    private static final String PATH = "lotto/history.csv";
+    private static final String PATH = "jwt/refresh-token-list.csv";
 
-    public static List<LottoHistoryDto> getHistories() {
+    public static List<JwtRefreshTokenDto> getRefreshTokens() {
 
         CsvMapper csvMapper = new CsvMapper();
-        try (MappingIterator<LottoHistoryDto> mappingIterator = csvMapper
-            .readerFor(LottoHistoryDto.class)
+        try (MappingIterator<JwtRefreshTokenDto> mappingIterator = csvMapper
+            .readerFor(JwtRefreshTokenDto.class)
             .with(csvSchema())
             .readValues(ResourceUtil.getPathResource(PATH).getFile())) {
 
@@ -35,15 +35,8 @@ public class LottoHistoryUtil {
 
     private static CsvSchema csvSchema() {
         return builder()
-            .addColumn("round", ColumnType.STRING)
-            .addColumn("date", ColumnType.STRING)
-            .addColumn("no1", ColumnType.NUMBER)
-            .addColumn("no2", ColumnType.NUMBER)
-            .addColumn("no3", ColumnType.NUMBER)
-            .addColumn("no4", ColumnType.NUMBER)
-            .addColumn("no5", ColumnType.NUMBER)
-            .addColumn("no6", ColumnType.NUMBER)
-            .addColumn("noBonus", ColumnType.NUMBER)
+            .addColumn("token", ColumnType.STRING)
+            .addColumn("expiredAt", ColumnType.STRING)
             .build().withHeader();
     }
 }

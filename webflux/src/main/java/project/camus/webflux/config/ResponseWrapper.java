@@ -22,7 +22,7 @@ public class ResponseWrapper {
             .build());
   }
 
-  public static Mono<ServerResponse> fail(Exception exception) {
+  public static Mono<ServerResponse> fail(Throwable exception) {
 
     if (exception instanceof CamusServerException camusServerException) {
       return ServerResponse.status(camusServerException.getHttpStatus())

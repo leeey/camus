@@ -8,8 +8,8 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @SpringBootApplication(scanBasePackages = "project.camus.webflux.*")
 public class WebFluxApplication {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    SpringApplication.run(WebFluxApplication.class, args);
-  }
+        SpringApplication.run(WebFluxApplication.class, args);
+    }
 }
