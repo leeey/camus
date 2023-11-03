@@ -1,0 +1,22 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webflux-conventions'
+}
+
+dependencies {
+    implementation(project(':common')) {
+        exclude(group: 'org.springframework.boot', module: 'spring-boot-starter-web')
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

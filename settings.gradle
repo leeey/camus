@@ -9,4 +9,5 @@ findProject(':infra:r2dbc')?.name = 'r2dbc'
 include 'main'
 include 'infra:main'
 findProject(':infra:main')?.name = 'main'
+include 'hexagonal'
 
