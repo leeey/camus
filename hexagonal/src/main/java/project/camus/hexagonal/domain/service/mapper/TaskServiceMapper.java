@@ -22,16 +22,5 @@ public interface TaskServiceMapper {
     @Mapping(target = "tasks", expression = "java(map(page.getContent()))")
     FindAllTasksResponsePortDto toPortDto(Page<TaskEntity> page);
 
-    default List<TaskPortDto> map(List<TaskEntity> entities) {
-
-        return entities.stream()
-            .map(entity -> TaskPortDto.builder()
-                .id(entity.getId())
-                .title(entity.getTitle())
-                .content(entity.getContent())
-                .priority(entity.getPriority())
-                .archived(entity.isArchived())
-                .build())
-            .toList();
-    }
+    List<TaskPortDto> map(List<TaskEntity> entities);
 }
