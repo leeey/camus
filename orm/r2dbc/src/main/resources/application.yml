@@ -1,0 +1,19 @@
+server:
+  port: 8083
+  error:
+    include-stacktrace: never
+spring:
+  application:
+    name: camus-orm-r2dbc
+  devtools:
+    add-properties: false
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+h2:
+  console:
+    port: 8090
