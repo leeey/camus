@@ -19,13 +19,8 @@ public interface TaskCreateMapper {
 
     CreateTaskResponse toResponse(CreateTaskResponseUseCaseDto dto);
 
-    default TaskUseCaseDto map(CreateTaskRequest request) {
-
-        return TaskUseCaseDto.builder()
-            .title(request.getTitle())
-            .content(request.getContent())
-            .priority(request.getPriorityType().getPriority())
-            .archived(false)
-            .build();
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "archived", ignore = true)
+    @Mapping(target = "priority", source = "request.priorityType.priority")
+    TaskUseCaseDto map(CreateTaskRequest request);
 }

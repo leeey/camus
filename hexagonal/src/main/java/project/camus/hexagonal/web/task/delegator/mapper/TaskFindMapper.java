@@ -9,7 +9,7 @@ import project.camus.hexagonal.usecase.task.dto.response.FindAllTasksResponseUse
 import project.camus.hexagonal.web.task.controller.dto.TaskDto;
 import project.camus.hexagonal.web.task.controller.response.FindAllTasksResponse;
 
-@Mapper
+@Mapper(imports = {TaskPriorityType.class})
 public interface TaskFindMapper {
 
     TaskFindMapper INSTANCE = Mappers.getMapper(TaskFindMapper.class);
@@ -17,13 +17,6 @@ public interface TaskFindMapper {
     @Mapping(target = "tasks", source = "dto.tasks")
     FindAllTasksResponse toResponse(FindAllTasksResponseUseCaseDto dto);
 
-    default TaskDto map(TaskUseCaseDto dto) {
-
-        return TaskDto.builder()
-            .title(dto.getTitle())
-            .content(dto.getContent())
-            .priorityType(TaskPriorityType.findByPriority(dto.getPriority()))
-            .archived(dto.isArchived())
-            .build();
-    }
+    @Mapping(target = "priorityType", expression = "java(TaskPriorityType.findByPriority(dto.getPriority()))")
+    TaskDto map(TaskUseCaseDto dto);
 }
