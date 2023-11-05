@@ -1,0 +1,10 @@
+server:
+  port: 8084
+  error:
+    include-stacktrace: never
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
