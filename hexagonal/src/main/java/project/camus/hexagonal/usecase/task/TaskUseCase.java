@@ -26,4 +26,9 @@ public class TaskUseCase {
 
         return taskPort.findAllTasks(pageable);
     }
+
+    public void deleteTaskById(Long id) {
+
+        taskPort.deleteTaskById(id);
+    }
 }

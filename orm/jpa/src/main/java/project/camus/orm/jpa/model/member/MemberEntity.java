@@ -22,7 +22,7 @@ public class MemberEntity extends JpaAuditEntity {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
-  private BigInteger id;
+  private Long id;
 
   private String username;
 

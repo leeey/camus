@@ -26,4 +26,9 @@ public class TaskPort {
 
         return MAPPER.toDto(taskService.findAllTasks(pageable));
     }
+
+    public void deleteTaskById(Long id) {
+
+        taskService.deleteTaskById(id);
+    }
 }
