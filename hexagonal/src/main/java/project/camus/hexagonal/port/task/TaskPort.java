@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import project.camus.hexagonal.domain.service.TaskService;
 import project.camus.hexagonal.port.task.dto.request.CreateTaskRequestPortDto;
 import project.camus.hexagonal.port.task.mapper.TaskPortMapper;
-import project.camus.hexagonal.usecase.task.dto.response.CreateTaskResponseUseCaseDto;
+import project.camus.hexagonal.usecase.task.dto.TaskUseCaseDto;
 import project.camus.hexagonal.usecase.task.dto.response.FindAllTasksResponseUseCaseDto;
 
 @Component
@@ -17,7 +17,7 @@ public class TaskPort {
 
     private final TaskService taskService;
 
-    public CreateTaskResponseUseCaseDto createTask(CreateTaskRequestPortDto portDto) {
+    public TaskUseCaseDto createTask(CreateTaskRequestPortDto portDto) {
 
         return MAPPER.toDto(taskService.createTask(MAPPER.toEntity(portDto)));
     }
@@ -30,5 +30,10 @@ public class TaskPort {
     public void deleteTaskById(Long id) {
 
         taskService.deleteTaskById(id);
+    }
+
+    public TaskUseCaseDto archiveTaskById(Long id) {
+
+        return MAPPER.toDto(taskService.archiveTaskById(id));
     }
 }

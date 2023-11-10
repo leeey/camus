@@ -15,16 +15,27 @@ public class JpaTaskAdapter {
 
     public TaskEntity createTask(TaskEntity entity) {
 
-        return taskDao.createTask(entity);
+        return taskDao.save(entity);
     }
 
     public Page<TaskEntity> findAllTasks(Pageable pageable) {
 
-        return taskDao.findAllTasks(pageable);
+        return taskDao.findAllByPage(pageable);
     }
 
-    public void deleteTaskById(Long id) {
+    public void delete(TaskEntity entity) {
 
-        taskDao.deleteTaskById(id);
+        taskDao.delete(entity);
+    }
+
+    public TaskEntity findTaskById(Long id) {
+
+        return taskDao.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("id"));
+    }
+
+    public TaskEntity updateTask(TaskEntity entity) {
+
+        return taskDao.save(entity);
     }
 }

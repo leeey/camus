@@ -9,7 +9,7 @@ import project.camus.hexagonal.web.task.controller.dto.TaskDto;
 @Builder
 @Getter
 @JsonInclude(Include.NON_NULL)
-public class CreateTaskResponse {
+public class ArchiveTaskResponse {
 
     TaskDto task;
 }

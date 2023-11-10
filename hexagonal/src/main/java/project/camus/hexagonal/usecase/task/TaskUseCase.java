@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import project.camus.hexagonal.port.task.TaskPort;
+import project.camus.hexagonal.usecase.task.dto.TaskUseCaseDto;
 import project.camus.hexagonal.usecase.task.dto.request.CreateTaskRequestUseCaseDto;
-import project.camus.hexagonal.usecase.task.dto.response.CreateTaskResponseUseCaseDto;
 import project.camus.hexagonal.usecase.task.dto.response.FindAllTasksResponseUseCaseDto;
 import project.camus.hexagonal.usecase.task.mapper.TaskUseCaseMapper;
 
@@ -17,7 +17,7 @@ public class TaskUseCase {
 
     private final TaskPort taskPort;
 
-    public CreateTaskResponseUseCaseDto createTask(CreateTaskRequestUseCaseDto dto) {
+    public TaskUseCaseDto createTask(CreateTaskRequestUseCaseDto dto) {
 
         return taskPort.createTask(MAPPER.toPortDto(dto.getTask()));
     }
@@ -30,5 +30,10 @@ public class TaskUseCase {
     public void deleteTaskById(Long id) {
 
         taskPort.deleteTaskById(id);
+    }
+
+    public TaskUseCaseDto archiveTaskById(Long id) {
+
+        return taskPort.archiveTaskById(id);
     }
 }

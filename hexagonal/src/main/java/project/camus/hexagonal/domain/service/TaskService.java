@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.camus.hexagonal.domain.service.mapper.TaskServiceMapper;
 import project.camus.hexagonal.infra.jpa.task.adapter.JpaTaskAdapter;
-import project.camus.hexagonal.port.task.dto.response.CreateTaskResponsePortDto;
+import project.camus.hexagonal.port.task.dto.TaskPortDto;
 import project.camus.hexagonal.port.task.dto.response.FindAllTasksResponsePortDto;
 import project.camus.orm.jpa.model.task.TaskEntity;
 
@@ -17,7 +17,7 @@ public class TaskService {
 
     private final JpaTaskAdapter jpaTaskAdapter;
 
-    public CreateTaskResponsePortDto createTask(TaskEntity entity) {
+    public TaskPortDto createTask(TaskEntity entity) {
 
         return MAPPER.toPortDto(jpaTaskAdapter.createTask(entity));
     }
@@ -29,6 +29,18 @@ public class TaskService {
 
     public void deleteTaskById(Long id) {
 
-        jpaTaskAdapter.deleteTaskById(id);
+        TaskEntity entity = findTaskById(id);
+        jpaTaskAdapter.delete(entity);
+    }
+
+    public TaskPortDto archiveTaskById(Long id) {
+
+        TaskEntity entity = findTaskById(id);
+        return MAPPER.toPortDto(jpaTaskAdapter.updateTask(entity.toBuilder().archived(true).build()));
+    }
+
+    private TaskEntity findTaskById(Long id) {
+
+        return jpaTaskAdapter.findTaskById(id);
     }
 }
