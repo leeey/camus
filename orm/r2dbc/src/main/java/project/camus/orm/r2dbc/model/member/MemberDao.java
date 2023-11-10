@@ -2,7 +2,10 @@ package project.camus.orm.r2dbc.model.member;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.r2dbc.connection.R2dbcTransactionManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -10,20 +13,24 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class MemberDao {
 
-  private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-  public Flux<MemberEntity> finaAllMembers() {
+    private final TransactionalOperator transactionalOperator;
 
-    return memberRepository.findAll();
-  }
+    public Flux<MemberEntity> finaAllMembers() {
 
-  public Flux<MemberEntity> createMembers(List<MemberEntity> members) {
+        return memberRepository.findAll();
+    }
 
-    return memberRepository.saveAll(members);
-  }
+    public Flux<MemberEntity> createMembers(List<MemberEntity> members) {
 
-  Mono<MemberEntity> createMember(MemberEntity member) {
+        return memberRepository.saveAll(members)
+            .as(transactionalOperator::transactional);
+    }
 
-    return memberRepository.save(member);
-  }
+    Mono<MemberEntity> createMember(MemberEntity member) {
+
+        return memberRepository.save(member)
+            .as(transactionalOperator::transactional);
+    }
 }

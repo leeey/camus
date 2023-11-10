@@ -26,7 +26,6 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
-
 }
 
 // Enable deprecation messages when compiling Java code

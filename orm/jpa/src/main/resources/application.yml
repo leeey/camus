@@ -7,21 +7,6 @@ spring:
     name: camus-orm-jpa
   devtools:
     add-properties: false
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MYSQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    database: h2
-    database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: true
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-    hibernate:
-      ddl-auto: create-drop
   h2:
     console:
       enabled: true

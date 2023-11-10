@@ -6,9 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
-import project.camus.hexagonal.domain.enums.TaskPriorityType;
 import project.camus.hexagonal.port.task.dto.TaskPortDto;
-import project.camus.hexagonal.port.task.dto.response.CreateTaskResponsePortDto;
 import project.camus.hexagonal.port.task.dto.response.FindAllTasksResponsePortDto;
 import project.camus.orm.jpa.model.task.TaskEntity;
 
@@ -17,7 +15,7 @@ public interface TaskServiceMapper {
 
     TaskServiceMapper INSTANCE = Mappers.getMapper(TaskServiceMapper.class);
 
-    CreateTaskResponsePortDto toPortDto(TaskEntity task);
+    TaskPortDto toPortDto(TaskEntity task);
 
     @Mapping(target = "tasks", expression = "java(map(page.getContent()))")
     FindAllTasksResponsePortDto toPortDto(Page<TaskEntity> page);
