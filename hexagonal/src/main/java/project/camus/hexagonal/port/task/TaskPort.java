@@ -1,6 +1,7 @@
 package project.camus.hexagonal.port.task;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import project.camus.hexagonal.domain.service.TaskService;
@@ -9,6 +10,7 @@ import project.camus.hexagonal.port.task.mapper.TaskPortMapper;
 import project.camus.hexagonal.usecase.task.dto.TaskUseCaseDto;
 import project.camus.hexagonal.usecase.task.dto.response.FindAllTasksResponseUseCaseDto;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TaskPort {

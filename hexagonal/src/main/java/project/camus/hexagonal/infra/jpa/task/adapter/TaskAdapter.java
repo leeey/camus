@@ -1,15 +1,17 @@
 package project.camus.hexagonal.infra.jpa.task.adapter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import project.camus.orm.jpa.model.task.TaskDao;
 import project.camus.orm.jpa.model.task.TaskEntity;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class JpaTaskAdapter {
+public class TaskAdapter {
 
     private final TaskDao taskDao;
 
