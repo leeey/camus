@@ -1,0 +1,25 @@
+server:
+  port: 8082
+  error:
+    include-stacktrace: never
+spring:
+  application:
+    name: database-jpa
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+  sql:
+    init:
+      mode: always
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka

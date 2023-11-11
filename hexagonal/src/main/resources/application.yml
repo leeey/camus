@@ -2,9 +2,18 @@ server:
   port: 8084
   error:
     include-stacktrace: never
-
+spring:
+  application:
+    name: hexagonal
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+

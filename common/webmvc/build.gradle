@@ -1,0 +1,19 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

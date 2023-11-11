@@ -7,8 +7,8 @@ import project.camus.hexagonal.infra.jpa.task.adapter.TaskAdapter
 import project.camus.hexagonal.port.task.TaskPort
 import project.camus.hexagonal.usecase.task.TaskUseCase
 import project.camus.hexagonal.web.task.delegator.TaskFindAllDelegator
-import project.camus.orm.jpa.model.task.TaskDao
-import project.camus.orm.jpa.model.task.TaskEntity
+import project.camus.database.jpa.model.task.TaskDao
+import project.camus.database.jpa.model.task.TaskEntity
 import spock.lang.Specification
 
 class TaskDelegatorTest extends Specification {

@@ -1,7 +1,6 @@
 plugins {
     id 'groovy'
-    id 'project.camus.library-webmvc-conventions'
-    id 'project.camus.library-webflux-conventions'
+    id 'project.camus.java-conventions'
 }
 
 dependencies {
