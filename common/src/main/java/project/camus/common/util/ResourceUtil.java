@@ -9,11 +9,11 @@ import project.camus.common.exception.CamusClientException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResourceUtil {
 
-  public static ClassPathResource getPathResource(String path) {
+    public static ClassPathResource getPathResource(String path) {
 
-    if (StringUtils.isBlank(path)) {
-      throw new CamusClientException(new IllegalArgumentException("path is invalid."));
+        if (StringUtils.isBlank(path)) {
+            throw new CamusClientException(new IllegalArgumentException("path is invalid."));
+        }
+        return new ClassPathResource(path);
     }
-    return new ClassPathResource(path);
-  }
 }

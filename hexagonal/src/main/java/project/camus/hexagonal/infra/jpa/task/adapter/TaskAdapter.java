@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import project.camus.orm.jpa.model.task.TaskDao;
-import project.camus.orm.jpa.model.task.TaskEntity;
+import project.camus.database.jpa.model.task.TaskDao;
+import project.camus.database.jpa.model.task.TaskEntity;
 
 @Slf4j
 @Component
