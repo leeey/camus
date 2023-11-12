@@ -21,4 +21,6 @@ include 'spring-cloud:gateway'
 findProject(':spring-cloud:gateway')?.name = 'gateway'
 include 'spring-cloud:example-api'
 findProject(':spring-cloud:example-api')?.name = 'example-api'
+include 'spring-cloud:config'
+findProject(':spring-cloud:config')?.name = 'config'
 

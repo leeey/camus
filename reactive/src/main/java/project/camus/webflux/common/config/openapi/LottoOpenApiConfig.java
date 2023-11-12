@@ -23,7 +23,7 @@ public class LottoOpenApiConfig {
             .addOpenApiCustomizer(e -> e.info(new Info()
                     .title("Lotto")
                     .version("1.0"))
-                .servers(List.of(new Server().url("http://localhost:" + port))))
+                .servers(List.of(new Server().url("http://127.0.0.1:" + port))))
             .build();
     }
 }

@@ -28,7 +28,7 @@ public class AuthOpenApiConfig {
             .addOpenApiCustomizer(e -> e.info(new Info()
                     .title("Auth Test")
                     .version("1.0"))
-                .servers(List.of(new Server().url("http://localhost:" + port)))
+                .servers(List.of(new Server().url("http://127.0.0.1:" + port)))
                 .schemaRequirement(HttpHeaders.AUTHORIZATION,
                     new SecurityScheme().in(In.HEADER).name(HttpHeaders.AUTHORIZATION).type(Type.APIKEY))
                 .addSecurityItem(new SecurityRequirement().addList(HttpHeaders.AUTHORIZATION))
