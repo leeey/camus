@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import project.camus.hexagonal.port.task.TaskPort;
 import project.camus.hexagonal.usecase.task.dto.request.CreateTaskRequestUseCaseDto;
 import project.camus.hexagonal.usecase.task.mapper.TaskUseCaseMapper;
-import project.camus.hexagonal.web.task.controller.response.ArchiveTaskResponse;
-import project.camus.hexagonal.web.task.controller.response.CreateTaskResponse;
-import project.camus.hexagonal.web.task.controller.response.FindAllTasksResponse;
+import project.camus.hexagonal.web.controller.task.response.ArchiveTaskResponse;
+import project.camus.hexagonal.web.controller.task.response.CreateTaskResponse;
+import project.camus.hexagonal.web.controller.task.response.FindAllTasksResponse;
 
 @Slf4j
 @Component

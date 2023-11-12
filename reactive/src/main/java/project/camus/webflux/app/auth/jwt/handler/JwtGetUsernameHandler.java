@@ -11,8 +11,8 @@ import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.exception.CamusServerException;
-import project.camus.webflux.config.ResponseWrapper;
-import project.camus.webflux.config.security.jwt.JwtTokenProvider;
+import project.camus.webflux.common.ResponseWrapper;
+import project.camus.webflux.common.config.security.jwt.JwtTokenProvider;
 import reactor.core.publisher.Mono;
 
 @Slf4j

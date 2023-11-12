@@ -22,7 +22,7 @@ import project.camus.common.SuccessResponse;
 import project.camus.webflux.app.lotto.dto.request.LottoFavoriteNumbersRequestDto;
 import project.camus.webflux.app.lotto.handler.LottoFavoriteNumbersHandler;
 import project.camus.webflux.app.lotto.handler.LottoYearlyMostNumbersHandler;
-import project.camus.webflux.config.ResponseWrapper;
+import project.camus.webflux.common.ResponseWrapper;
 
 @Slf4j
 @Configuration

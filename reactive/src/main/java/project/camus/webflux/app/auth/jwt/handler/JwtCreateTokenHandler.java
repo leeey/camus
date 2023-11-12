@@ -9,8 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.util.ValidationUtil;
 import project.camus.webflux.app.auth.jwt.dto.request.JwtCreateTokenRequestDto;
-import project.camus.webflux.config.ResponseWrapper;
-import project.camus.webflux.config.security.jwt.JwtTokenProvider;
+import project.camus.webflux.common.ResponseWrapper;
+import project.camus.webflux.common.config.security.jwt.JwtTokenProvider;
 import reactor.core.publisher.Mono;
 
 @Slf4j

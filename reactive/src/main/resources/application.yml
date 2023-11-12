@@ -12,7 +12,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-
 jwt:
   tokenSecret: ***REMOVED***
   expirationMs: 3600000

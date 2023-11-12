@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common:webmvc')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
 //    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'

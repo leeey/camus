@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.util.RandomUtil;
 import project.camus.webflux.app.lotto.dto.request.LottoFavoriteNumbersRequestDto;
-import project.camus.webflux.config.ResponseWrapper;
+import project.camus.webflux.common.ResponseWrapper;
 import reactor.core.publisher.Mono;
 
 @Slf4j

@@ -8,6 +8,7 @@ group = 'project.camus'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'io.netty:netty-all:4.1.101.Final'
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0'
     testImplementation 'io.projectreactor:reactor-test'
 }
