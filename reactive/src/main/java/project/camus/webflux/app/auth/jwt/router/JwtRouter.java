@@ -22,7 +22,7 @@ import project.camus.common.SuccessResponse;
 import project.camus.webflux.app.auth.jwt.dto.request.JwtCreateTokenRequestDto;
 import project.camus.webflux.app.auth.jwt.handler.JwtCreateTokenHandler;
 import project.camus.webflux.app.auth.jwt.handler.JwtGetUsernameHandler;
-import project.camus.webflux.config.ResponseWrapper;
+import project.camus.webflux.common.ResponseWrapper;
 
 @Slf4j
 @Configuration

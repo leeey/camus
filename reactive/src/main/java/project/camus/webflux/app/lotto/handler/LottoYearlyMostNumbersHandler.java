@@ -17,7 +17,7 @@ import project.camus.webflux.app.lotto.dto.LottoHistoryDto;
 import project.camus.webflux.app.lotto.dto.LottoNumberCountDto;
 import project.camus.webflux.app.lotto.dto.response.LottoYearlyMostNumbersResponseDto;
 import project.camus.webflux.app.lotto.util.LottoHistoryUtil;
-import project.camus.webflux.config.ResponseWrapper;
+import project.camus.webflux.common.ResponseWrapper;
 import reactor.core.publisher.Mono;
 
 @Slf4j

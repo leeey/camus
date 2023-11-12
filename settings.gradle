@@ -17,3 +17,8 @@ include 'hexagonal'
 include 'spring-cloud'
 include 'spring-cloud:service-discovery'
 findProject(':spring-cloud:service-discovery')?.name = 'service-discovery'
+include 'spring-cloud:gateway'
+findProject(':spring-cloud:gateway')?.name = 'gateway'
+include 'spring-cloud:example-api'
+findProject(':spring-cloud:example-api')?.name = 'example-api'
+

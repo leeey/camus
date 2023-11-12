@@ -9,9 +9,6 @@ dependencies {
     runtimeOnly 'com.h2database:h2:2.2.224'
 
     testRuntimeOnly 'com.h2database:h2:2.2.224'
-
-    implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 }
 
 test {

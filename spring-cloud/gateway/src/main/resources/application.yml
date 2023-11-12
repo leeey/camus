@@ -1,0 +1,33 @@
+server:
+  port: 8000
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            filterName: GlobalFilter
+        - StripPrefix=1
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods:
+              - OPTIONS
+              - POST
+              - GET
+              - PUT
+              - DELETE
+      routes:
+        - id: example-api
+          uri: lb://EXAMPLE-API
+          predicates:
+            - Path=/example-api/**

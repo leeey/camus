@@ -2,11 +2,11 @@ import org.instancio.Instancio
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import project.camus.hexagonal.domain.service.TaskService
-import project.camus.hexagonal.infra.jpa.task.adapter.TaskAdapter
+import project.camus.hexagonal.domain.task.TaskService
+import project.camus.hexagonal.infra.task.adapter.TaskAdapter
 import project.camus.hexagonal.port.task.TaskPort
 import project.camus.hexagonal.usecase.task.TaskUseCase
-import project.camus.hexagonal.web.task.delegator.TaskFindAllDelegator
+import project.camus.hexagonal.web.controller.task.delegator.TaskFindAllDelegator
 import project.camus.database.jpa.model.task.TaskDao
 import project.camus.database.jpa.model.task.TaskEntity
 import spock.lang.Specification
