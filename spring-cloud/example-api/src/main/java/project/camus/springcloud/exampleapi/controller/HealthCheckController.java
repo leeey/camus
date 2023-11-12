@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +19,13 @@ public class HealthCheckController {
 
     private final HttpServletRequest request;
 
+    private final Environment environment;
+
     @GetMapping
     public ResponseEntity<SuccessResponse<Map<String, Object>>> healthCheck() {
 
-        return ResponseWrapper.ok(Map.of("status", "OK", "port", request.getServerPort()));
+        return ResponseWrapper.ok(Map.of("status", "OK",
+            "port", request.getServerPort(),
+            "version", Objects.requireNonNullElse(environment.getProperty("version"), "undefined")));
     }
 }

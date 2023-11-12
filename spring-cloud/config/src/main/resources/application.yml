@@ -1,0 +1,39 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: config
+  devtools:
+    add-properties: false
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh
+git:
+  password: |
+    Waz7hIqwOIgqX9K+lSCs9PycpkE0xXnRujhqCFJOuISQJNTj7EYDtzhGJzmq9ZQmSV6WarNz6GOsjpR
+    /yUsYL+l2EuIH3m+vDkcGbhgOPDnPn5FvxuvTiT+EOolunwcAjpN/lYZ3KFpdPR
+    /8FgtQwsiLgXNvbCzb4o3M6gZoAQ9Zdhpzsl6xdJbpkI+ZSqWnJl8abxZg
+    /k3JiBpvBv+zCLyBR+rtvyAReoKmFi+dJXVKCX4RWIUBV
+    /BaV+yTK0FGr10ibmWmKDYwLl8Lxz8om7i3cXK0
+    +7xj9bAKskAQPIfysoCJcO2CHf8sAOLim17VnEBbBeXc56j3SGmb7zjcuiS9qtCabqNhOJw05T
+    /ESu5LJK9Cpvj8hCCm+OoXxAsbK93nnig3oAkystFc/a32hSkW1ycNMSob7l8Fe2fAHAP8Do5Vx575+5OIS8WuC4sHJxOXaAA
+    /cCNMoUxntd2u+v3uqBrs0DPw8pmJIj4w7V5oDV4eoUDIT4vnNlnDwelxJIi3DItGOc1soR1S7e8WuodCxFgcD1l3M8z5vh4yIdaoTxFU8
+    /GnqkbWR7z56Y2fJoOWIPpGffSQiv7Y4Os6Ozqoy65sV55DI10cV8dhAOWyhbI0xoRfowOBWzkclhAPBSzQDteFUwN1kjFiZk5
+    +By3ZAQB6tIdmIxU10F4WTd4=
+key-store:
+  password: |
+    Sp+1DLskVs7JJR0q/oaysNOpnUxU8M86S/DAAIAD24IVfkWeShQSECtF8b8qAnKAyV4+Xll
+    /eMUPXnoQBn+fFc+a8rU8YTM68L0nCIc7H6erC
+    +2uRKvG7ySrQyiy4rpvkALESoh1QyXaNhHwTL5ZXoy4u7kHaY5pFy8rVHaYwSKzf153AOMH4hlPxbPdCNIT63fdNxmeH
+    /lC2IO3Ou6k90Ey86CbUbf1AhRHz26LlKFzaLwT0aXqiJY6YXWI4ddzozY9E6H7
+    /Jx/56qQK+qaAtVCeNKTpVb0+J2inb06d4lqXQ/hJrmGeRv9kTihAwSNyfoz6wI9EdcYgG+T+AeaeEuC1s
+    /jLyEcDi4kTnlxiGuTuD1nUJ4F+ulE41BA5W89ghffEBQXqZD6g/MiimYR1y3S7JzG1ZYa5cKSI2unT1j
+    +mSQcu3QzBLSAKPz7NNDp0RTf/x+CYuCcykRK/+jGLn9HZYbC6xLzZc0XE1H
+    +zeOVEsiEX2iGOxBW7L3BGAslysFOcQrXbewtYUNDID5DULUz/EWXrV+/S+GZhTrhJ0nb+OQse29fXwun++A5FlU7
+    /li7dGAT51ggrLaelp69dNxqIynk+x6kDbOOCvKax2f6Zk3DyYl5dH5lQG+i
+    /k8X5tfzRBMsUJIWPQSNyBvNfFwoFVuTFj4+guNDu+QFRkk=
+
