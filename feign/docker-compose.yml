@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mashup:
+    build: ./mashup
+    container_name: camus-feign-mashup
+    ports:
+      - "9090:9090"
+  member:
+    build: ./member
+    container_name: camus-feign-member
+    ports:
+      - "9091:9091"
+  task:
+    build: ./task
+    container_name: camus-feign-task
+    ports:
+      - "9092:9092"
