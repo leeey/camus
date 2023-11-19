@@ -10,7 +10,6 @@ import org.springframework.data.util.CastUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import project.camus.common.SuccessResponse;
@@ -44,15 +43,15 @@ public class ResponseWrapper {
             return;
         }
 
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (Objects.nonNull(requestAttributes)) {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
-            HttpServletRequest request = servletRequestAttributes.getRequest();
+
+            HttpServletRequest request = requestAttributes.getRequest();
             HttpHeaders headers = new HttpHeaders();
             Arrays.stream(headerNames).forEach(name -> {
-                String value = request.getHeader(name);
-                if (Objects.nonNull(value)) {
-                    headers.add(name, value);
+                Object attribute = request.getAttribute(name);
+                if (Objects.nonNull(attribute)) {
+                    headers.add(name, attribute.toString());
                 }
             });
             builder.headers(headers);
