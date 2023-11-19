@@ -8,4 +8,8 @@ public class CamusClientException extends RuntimeException {
     public CamusClientException(Throwable cause) {
         super(cause);
     }
+
+    public CamusClientException(String message) {
+        super(message);
+    }
 }

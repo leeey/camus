@@ -1,0 +1,5 @@
+server:
+  port: 9090
+feign-url:
+  member: http://localhost:9091/camus/v1/members
+  task: http://localhost:9092/camus/v1/tasks

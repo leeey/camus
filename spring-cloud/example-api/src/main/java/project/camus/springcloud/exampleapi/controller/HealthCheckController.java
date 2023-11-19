@@ -24,7 +24,7 @@ public class HealthCheckController {
     @GetMapping
     public ResponseEntity<SuccessResponse<Map<String, Object>>> healthCheck() {
 
-        return ResponseWrapper.ok(Map.of("status", "OK",
+        return ResponseWrapper.success(Map.of("status", "OK",
             "port", request.getServerPort(),
             "version", Objects.requireNonNullElse(environment.getProperty("version"), "undefined")));
     }

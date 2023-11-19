@@ -14,15 +14,15 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import project.camus.common.SuccessResponse;
-import project.camus.webmvc.common.constants.HeaderConstants;
+import project.camus.webmvc.common.constants.CamusConstants;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseWrapper {
 
-    public static <T> ResponseEntity<SuccessResponse<T>> ok(T data) {
+    public static <T> ResponseEntity<SuccessResponse<T>> success(T data) {
 
         BodyBuilder builder = ResponseEntity.ok();
-        addHeaders(builder, HeaderConstants.TRACE_ID);
+        addHeaders(builder, CamusConstants.TRACE_ID);
 
         return builder.body(CastUtils.cast(SuccessResponse.builder()
             .result(data)
@@ -30,10 +30,10 @@ public class ResponseWrapper {
             .build()));
     }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> ok() {
+    public static <T> ResponseEntity<SuccessResponse<T>> success() {
 
         BodyBuilder builder = ResponseEntity.ok();
-        addHeaders(builder, HeaderConstants.TRACE_ID);
+        addHeaders(builder, CamusConstants.TRACE_ID);
 
         return builder.build();
     }

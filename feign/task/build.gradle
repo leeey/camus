@@ -1,0 +1,13 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:webmvc')
+}
+
+test {
+    useJUnitPlatform()
+}

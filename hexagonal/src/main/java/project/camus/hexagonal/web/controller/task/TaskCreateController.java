@@ -21,6 +21,6 @@ public class TaskCreateController extends V1TaskController {
     @PostMapping()
     public ResponseEntity<SuccessResponse<CreateTaskResponse>> createTask(@Valid @RequestBody CreateTaskRequest request) {
 
-        return ResponseWrapper.ok(taskCreateDelegator.createTask(request));
+        return ResponseWrapper.success(taskCreateDelegator.createTask(request));
     }
 }

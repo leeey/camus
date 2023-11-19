@@ -17,6 +17,6 @@ public class HealthCheckController {
     @GetMapping
     public ResponseEntity<SuccessResponse<Map<String, String>>> healthCheck() {
 
-        return ResponseWrapper.ok(Map.of("status", "OK"));
+        return ResponseWrapper.success(Map.of("status", "OK"));
     }
 }

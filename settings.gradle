@@ -24,3 +24,11 @@ findProject(':spring-cloud:example-api')?.name = 'example-api'
 include 'spring-cloud:config'
 findProject(':spring-cloud:config')?.name = 'config'
 
+include 'feign'
+include 'feign:mashup'
+findProject(':feign:mashup')?.name = 'mashup'
+include 'feign:member'
+findProject(':feign:member')?.name = 'member'
+include 'feign:task'
+findProject(':feign:task')?.name = 'task'
+

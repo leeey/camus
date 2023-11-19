@@ -3,7 +3,7 @@ package project.camus.hexagonal.web.controller.task.delegator.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import project.camus.hexagonal.common.mapper.CommonMapper;
+import project.camus.common.mapper.CommonMapper;
 import project.camus.hexagonal.usecase.task.dto.TaskUseCaseDto;
 import project.camus.hexagonal.usecase.task.dto.request.CreateTaskRequestUseCaseDto;
 import project.camus.hexagonal.web.controller.task.request.CreateTaskRequest;
