@@ -22,6 +22,6 @@ public class TaskDeleteController extends V1TaskController {
     public ResponseEntity<SuccessResponse<CreateTaskResponse>> deleteTaskById(@PathVariable("id") @Valid @NotNull Long id) {
 
         taskDeleteDelegator.deleteTaskById(id);
-        return ResponseWrapper.ok();
+        return ResponseWrapper.success();
     }
 }

@@ -1,4 +1,4 @@
-package project.camus.hexagonal.common.mapper;
+package project.camus.common.mapper;
 
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;

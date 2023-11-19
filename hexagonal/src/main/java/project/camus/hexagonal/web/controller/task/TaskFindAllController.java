@@ -25,6 +25,6 @@ public class TaskFindAllController extends V1TaskController {
     public ResponseEntity<SuccessResponse<FindAllTasksResponse>> findAllTasks(
         @ParameterObject @PageableDefault(sort = {"priority"}, direction = Direction.DESC) Pageable pageable) {
 
-        return ResponseWrapper.ok(taskFindAllDelegator.findAllTasks(pageable));
+        return ResponseWrapper.success(taskFindAllDelegator.findAllTasks(pageable));
     }
 }

@@ -21,6 +21,6 @@ public class TaskArchiveController extends V1TaskController {
     @PutMapping("/{id}/archive")
     public ResponseEntity<SuccessResponse<ArchiveTaskResponse>> archiveTaskById(@PathVariable("id") @Valid @NotNull Long id) {
 
-        return ResponseWrapper.ok(taskArchiveDelegator.archiveTaskById(id));
+        return ResponseWrapper.success(taskArchiveDelegator.archiveTaskById(id));
     }
 }
