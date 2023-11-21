@@ -1,4 +1,4 @@
-package project.camus.feign.member.api.common;
+package project.camus.feign.task.api.common;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -13,13 +13,14 @@ import project.camus.webmvc.common.constants.CamusConstants;
 
 @Slf4j
 @Component
-public class WebFilter implements Filter {
+public class TaskWebFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
+        //TODO: delete
         String traceId = servletRequest.getHeader(CamusConstants.TRACE_ID);
         log.info(CamusConstants.TRACE_ID + ": " + traceId);
 

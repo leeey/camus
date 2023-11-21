@@ -1,2 +1,22 @@
 server:
-  port: 9091
+  port: 9001
+spring:
+  application:
+    name: camus-feign-member
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+logging:
+  pattern:
+    level: '%5p {applicationName: ${spring.application.name:}, traceId: %X{traceId:-}, spanId: %X{spanId:-}}'

@@ -7,7 +7,13 @@ dependencies {
     implementation project(':common')
     implementation project(':common:webmvc')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    implementation platform('io.micrometer:micrometer-tracing-bom:latest.release')
+
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation("io.github.openfeign:feign-micrometer")
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 test {

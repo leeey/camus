@@ -31,4 +31,6 @@ include 'feign:member'
 findProject(':feign:member')?.name = 'member'
 include 'feign:task'
 findProject(':feign:task')?.name = 'task'
+include 'feign:observer'
+findProject(':feign:observer')?.name = 'observer'
 

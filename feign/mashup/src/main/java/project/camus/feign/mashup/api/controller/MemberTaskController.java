@@ -17,7 +17,7 @@ import project.camus.webmvc.common.ResponseWrapper;
 public class MemberTaskController {
 
     private final MemberTaskDelegator memberTaskDelegator;
-
+    
     @GetMapping("/{memberId}/tasks")
     public ResponseEntity<SuccessResponse<MemberTaskResponse>> findTasksByMemberId(@PathVariable("memberId") Long memberId) {
 
