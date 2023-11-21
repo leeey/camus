@@ -6,14 +6,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.camus.common.SuccessResponse;
 import project.camus.common.exception.CamusServerException;
 import project.camus.common.util.ObjectMapperUtil;
 import project.camus.feign.mashup.domain.client.TaskFeignClient;
-import project.camus.feign.mashup.domain.dto.member.MemberDto;
 import project.camus.feign.mashup.domain.dto.task.TaskDto;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskService {

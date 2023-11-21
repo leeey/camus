@@ -1,5 +1,31 @@
 server:
-  port: 9090
+  port: 9000
+spring:
+  application:
+    name: camus-feign-mashup
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
 feign-url:
-  member: http://camus-feign-member:9091/camus/v1/members
-  task: http://camus-feign-task:9092/camus/v1/tasks
+  member: http://camus-feign-member:9001/camus/v1/members
+  task: http://camus-feign-task:9002/camus/v1/tasks
+management:
+  tracing:
+    propagation:
+      type: w3c
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+logging:
+  pattern:
+    level: '%5p {applicationName: ${spring.application.name:}, traceId: %X{traceId:-}, spanId: %X{spanId:-}}'

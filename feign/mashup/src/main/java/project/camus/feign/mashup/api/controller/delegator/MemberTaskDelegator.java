@@ -1,5 +1,6 @@
 package project.camus.feign.mashup.api.controller.delegator;
 
+import io.micrometer.observation.annotation.Observed;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ public class MemberTaskDelegator {
 
     private final TaskService taskService;
 
-
+    @Observed(name = "MemberTaskDelegator", contextualName = "findTasksByMemberId")
     public MemberTaskResponse findTasksByMemberId(Long memberId) {
 
         MemberDto member = memberService.findMemberByMemberId(memberId);

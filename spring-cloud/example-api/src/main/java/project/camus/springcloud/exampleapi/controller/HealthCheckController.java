@@ -1,5 +1,6 @@
 package project.camus.springcloud.exampleapi.controller;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +22,7 @@ public class HealthCheckController {
 
     private final Environment environment;
 
+    @Timed(value = "user.account.id", longTask = true)
     @GetMapping
     public ResponseEntity<SuccessResponse<Map<String, Object>>> healthCheck() {
 
