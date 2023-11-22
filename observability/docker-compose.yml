@@ -4,14 +4,14 @@ services:
     build: ./mashup
     container_name: camus-observability-mashup
     ports:
-      - "9000:9000"
+      - '9000:9000'
   member:
     build: ./member
     container_name: camus-observability-member
     ports:
-      - "9001:9001"
+      - '9001:9001'
   task:
     build: ./task
     container_name: camus-observability-task
     ports:
-      - "9002:9002"
+      - '9002:9002'
