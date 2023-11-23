@@ -1,16 +1,16 @@
 plugins {
     id 'groovy'
-    id 'project.camus.library-webflux-conventions'
+    id 'project.camus.library-webmvc-conventions'
 }
 
 dependencies {
     implementation project(':common')
     implementation project(':common:webmvc')
+    implementation project(':aws')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation 'org.springframework.cloud:spring-cloud-config-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
-    implementation "com.amazonaws:aws-java-sdk-kms:${awsVersion}"
 }
 
 test {

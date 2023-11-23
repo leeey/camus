@@ -8,7 +8,7 @@ import org.springframework.cloud.config.server.environment.MultipleJGitEnvironme
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
-import project.camus.springcloud.config.util.AwsKmsUtil;
+import project.camus.aws.client.AwsKmsClient;
 
 @Configuration
 public class ConfigServerConfig {
@@ -21,13 +21,17 @@ public class ConfigServerConfig {
 
     private final String gitPassword;
 
+    private final AwsKmsClient awsKmsClient;
+
     public ConfigServerConfig(ConfigurableEnvironment configurableEnvironment, MultipleJGitEnvironmentProperties jGitEnvironmentProperties,
-        ObservationRegistry observationRegistry, @Value("${git.password}") String gitPassword) {
+        ObservationRegistry observationRegistry, @Value("${git.password}") String gitPassword,
+        AwsKmsClient awsKmsClient) {
 
         this.configurableEnvironment = configurableEnvironment;
         this.jGitEnvironmentProperties = jGitEnvironmentProperties;
         this.observationRegistry = observationRegistry;
         this.gitPassword = gitPassword;
+        this.awsKmsClient = awsKmsClient;
     }
 
     @Bean
@@ -35,7 +39,7 @@ public class ConfigServerConfig {
 
         jGitEnvironmentProperties.setUri("https://github.com/leeey/camus-config-resources.git");
         jGitEnvironmentProperties.setUsername("leeey");
-        jGitEnvironmentProperties.setPassword(AwsKmsUtil.decrypt(gitPassword));
+        jGitEnvironmentProperties.setPassword(awsKmsClient.decrypt(gitPassword));
         jGitEnvironmentProperties.setDefaultLabel("main");
         jGitEnvironmentProperties.setSearchPaths("config", "gateway", "api");
 

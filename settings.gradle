@@ -31,4 +31,6 @@ include 'observability:member'
 findProject(':observability:member')?.name = 'member'
 include 'observability:task'
 findProject(':observability:task')?.name = 'task'
+include 'kafka'
+include 'aws'
 
