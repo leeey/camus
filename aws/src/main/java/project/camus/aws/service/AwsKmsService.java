@@ -1,18 +1,16 @@
-package project.camus.aws.client;
+package project.camus.aws.service;
 
-import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.model.DecryptRequest;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.kms.model.EncryptionAlgorithmSpec;
-import com.amazonaws.services.s3.AmazonS3;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
-import project.camus.aws.adapter.AwsKmsAdapter;
+import project.camus.aws.builder.AwsKmsClient;
 
 @Component
-public class AwsKmsClient extends AwsKmsAdapter {
+public class AwsKmsService extends AwsKmsClient {
 
     public String encrypt(String text) {
 

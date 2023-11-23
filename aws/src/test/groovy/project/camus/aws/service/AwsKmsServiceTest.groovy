@@ -1,11 +1,11 @@
-package project.camus.aws.client
+package project.camus.aws.service
 
 
 import spock.lang.Specification
 
-class AwsKmsClientTest extends Specification {
+class AwsKmsServiceTest extends Specification {
 
-    def client = Spy(AwsKmsClient)
+    def service = Spy(AwsKmsService)
 
     def "encrypt & decrypt"() {
 
@@ -13,14 +13,14 @@ class AwsKmsClientTest extends Specification {
         def plainText = "hello"
 
         when:
-        def encrypted = client.encrypt(plainText)
+        def encrypted = service.encrypt(plainText)
 
         then:
         encrypted != null
         println encrypted
 
         when:
-        def decrypted = client.decrypt(encrypted)
+        def decrypted = service.decrypt(encrypted)
 
         then:
         plainText == decrypted
