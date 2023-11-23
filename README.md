@@ -25,4 +25,4 @@
 
 #### reactive
 - router function
-- router handler
+- handler function
