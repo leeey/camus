@@ -6,24 +6,25 @@ import spock.lang.Specification
 class AwsKmsClientTest extends Specification {
 
     def builder = Spy(AwsKmsBuilder)
-    def client = Spy(AwsKmsClient, constructorArgs: [builder])
+    AwsKmsClient client = Spy(AwsKmsClient, constructorArgs: [builder]) as AwsKmsClient
 
     def "encrypt & decrypt"() {
 
         given:
-        def plainText = "hello"
+        def word = "hello"
 
         when:
-        def encrypted = client.encrypt(plainText)
+        def cipher = client.encrypt(word)
 
         then:
-        encrypted != null
-        println encrypted
+        1 * builder.build()
+        cipher != null
 
         when:
-        def decrypted = client.decrypt(encrypted)
+        def plain = client.decrypt(cipher)
 
         then:
-        plainText == decrypted
+        1 * builder.build()
+        plain == word
     }
 }

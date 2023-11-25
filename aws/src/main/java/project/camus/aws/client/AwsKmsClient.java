@@ -19,22 +19,22 @@ public class AwsKmsClient {
 
     private final AwsKmsBuilder awsKmsBuilder;
 
-    public String encrypt(String text) {
+    public String encrypt(String plain) {
 
         EncryptRequest request = new EncryptRequest();
         request.withKeyId(KEY_ID);
-        request.withPlaintext(ByteBuffer.wrap(text.getBytes(StandardCharsets.UTF_8)));
+        request.withPlaintext(ByteBuffer.wrap(plain.getBytes(StandardCharsets.UTF_8)));
         request.withEncryptionAlgorithm(EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256);
 
         byte[] cipherBytes = awsKmsBuilder.build().encrypt(request).getCiphertextBlob().array();
         return Base64.encodeBase64String(cipherBytes);
     }
 
-    public String decrypt(String cipherBase64) {
+    public String decrypt(String cipher) {
 
         DecryptRequest request = new DecryptRequest();
         request.withKeyId(KEY_ID);
-        request.withCiphertextBlob(ByteBuffer.wrap(Base64.decodeBase64(cipherBase64)));
+        request.withCiphertextBlob(ByteBuffer.wrap(Base64.decodeBase64(cipher)));
         request.withEncryptionAlgorithm(EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256);
 
         byte[] textBytes = awsKmsBuilder.build().decrypt(request).getPlaintext().array();
