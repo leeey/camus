@@ -9,6 +9,7 @@ dependencies {
     implementation "com.amazonaws:aws-java-sdk-kms:${awsVersion}"
     implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
     implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsVersion}"
+    implementation "com.amazonaws:aws-java-sdk-cloudfront:${awsVersion}"
 
 }
 

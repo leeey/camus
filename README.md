@@ -26,3 +26,9 @@
 #### reactive
 - router function
 - handler function
+
+#### aws
+- kms client
+- s3 client
+- cloudfront client
+- dynamodb client
