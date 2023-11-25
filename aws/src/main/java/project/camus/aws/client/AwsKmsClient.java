@@ -1,16 +1,23 @@
-package project.camus.aws.service;
+package project.camus.aws.client;
 
 import com.amazonaws.services.kms.model.DecryptRequest;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.kms.model.EncryptionAlgorithmSpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
-import project.camus.aws.builder.AwsKmsClient;
+import project.camus.aws.builder.AwsKmsBuilder;
 
 @Component
-public class AwsKmsService extends AwsKmsClient {
+@RequiredArgsConstructor
+public class AwsKmsClient {
+
+    // this arn is only for test.
+    private static final String KEY_ID = "f096a65c-38d6-4a2b-b0c5-7f5c81636367";
+
+    private final AwsKmsBuilder awsKmsBuilder;
 
     public String encrypt(String text) {
 
@@ -19,7 +26,7 @@ public class AwsKmsService extends AwsKmsClient {
         request.withPlaintext(ByteBuffer.wrap(text.getBytes(StandardCharsets.UTF_8)));
         request.withEncryptionAlgorithm(EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256);
 
-        byte[] cipherBytes = getClient().encrypt(request).getCiphertextBlob().array();
+        byte[] cipherBytes = awsKmsBuilder.build().encrypt(request).getCiphertextBlob().array();
         return Base64.encodeBase64String(cipherBytes);
     }
 
@@ -30,7 +37,7 @@ public class AwsKmsService extends AwsKmsClient {
         request.withCiphertextBlob(ByteBuffer.wrap(Base64.decodeBase64(cipherBase64)));
         request.withEncryptionAlgorithm(EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256);
 
-        byte[] textBytes = getClient().decrypt(request).getPlaintext().array();
+        byte[] textBytes = awsKmsBuilder.build().decrypt(request).getPlaintext().array();
         return new String(textBytes);
     }
 }

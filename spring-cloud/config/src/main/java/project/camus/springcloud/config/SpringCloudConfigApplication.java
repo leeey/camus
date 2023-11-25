@@ -7,7 +7,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @EnableConfigServer
 @SpringBootApplication(scanBasePackages = {
     "project.camus.springcloud.config",
-    "project.camus.aws.service",
+    "project.camus.aws.client",
 })
 public class SpringCloudConfigApplication {
 
