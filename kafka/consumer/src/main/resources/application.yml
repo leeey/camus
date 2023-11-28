@@ -1,0 +1,16 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: camus-kafka-consumer
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    consumer:
+      auto-offset-reset: earliest
+      properties:
+        schema:
+          registry:
+            url: http://localhost:18081
+        specific:
+          avro:
+            reader: true

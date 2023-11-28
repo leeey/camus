@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+}
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation "org.apache.avro:avro:1.11.3"
+}
+
+test {
+    useJUnitPlatform()
+}

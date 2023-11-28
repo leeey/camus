@@ -12,6 +12,7 @@ include 'database:r2dbc'
 findProject(':database:r2dbc')?.name = 'r2dbc'
 
 include 'reactive'
+
 include 'hexagonal'
 
 include 'spring-cloud'
@@ -31,6 +32,14 @@ include 'observability:member'
 findProject(':observability:member')?.name = 'member'
 include 'observability:task'
 findProject(':observability:task')?.name = 'task'
-include 'kafka'
+
 include 'aws'
+
+include 'kafka'
+include 'kafka:producer'
+findProject(':kafka:producer')?.name = 'producer'
+include 'kafka:consumer'
+findProject(':kafka:consumer')?.name = 'consumer'
+include 'kafka:avro'
+findProject(':kafka:avro')?.name = 'avro'
 

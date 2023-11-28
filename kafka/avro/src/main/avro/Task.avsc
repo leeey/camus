@@ -1,0 +1,9 @@
+{
+  "namespace": "project.camus.kafka.avro",
+  "type": "record",
+  "name": "TaskRecord",
+  "fields": [
+    {"name": "title", "type": "string"},
+    {"name": "details", "type": ["string", "null"]}
+  ]
+}
