@@ -10,7 +10,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import project.camus.kafka.avro.TaskRecord;
+import project.camus.kafka.avro.Task;
 import project.camus.kafka.producer.controller.request.TaskRequest;
 
 @Slf4j
@@ -21,15 +21,15 @@ public class TaskService {
 
     private static final String TOPIC = "task-topic";
 
-    private final KafkaTemplate<String, TaskRecord> kafkaTemplate;
+    private final KafkaTemplate<String, Task> kafkaTemplate;
 
     public void sendMessage(@NonNull TaskRequest request) {
 
-        TaskRecord task = TaskRecord.newBuilder()
+        Task task = Task.newBuilder()
             .setTitle(request.getTitle())
             .setDetails(request.getDetails())
             .build();
-        CompletableFuture<SendResult<String, TaskRecord>> future = sendMessage(task);
+        CompletableFuture<SendResult<String, Task>> future = sendMessage(task);
         future.whenComplete((result, ex) -> {
             if (Objects.isNull(ex)) {
                 log.info("Sent message=[{}] with offset=[{}]", task, result.getRecordMetadata().offset());
@@ -39,7 +39,7 @@ public class TaskService {
         });
     }
 
-    private CompletableFuture<SendResult<String, TaskRecord>> sendMessage(TaskRecord task) {
+    private CompletableFuture<SendResult<String, Task>> sendMessage(Task task) {
 
         return kafkaTemplate.send(new ProducerRecord<>(TOPIC, task));
     }

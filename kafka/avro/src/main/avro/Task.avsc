@@ -1,9 +1,18 @@
 {
   "namespace": "project.camus.kafka.avro",
   "type": "record",
-  "name": "TaskRecord",
+  "name": "Task",
   "fields": [
-    {"name": "title", "type": "string"},
-    {"name": "details", "type": ["string", "null"]}
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "details",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
   ]
 }
