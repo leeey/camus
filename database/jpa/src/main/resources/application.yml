@@ -7,6 +7,12 @@ spring:
     name: database-jpa
   devtools:
     add-properties: false
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
   h2:
     console:
       enabled: true
@@ -17,3 +23,10 @@ spring:
   sql:
     init:
       mode: always
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace

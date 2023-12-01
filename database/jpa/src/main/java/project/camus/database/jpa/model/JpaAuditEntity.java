@@ -33,5 +33,4 @@ public class JpaAuditEntity {
 
   @LastModifiedBy
   private String lastModifiedBy;
-
 }

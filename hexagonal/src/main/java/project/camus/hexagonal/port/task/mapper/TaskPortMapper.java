@@ -16,6 +16,7 @@ public interface TaskPortMapper extends CommonMapper {
 
     TaskPortMapper INSTANCE = Mappers.getMapper(TaskPortMapper.class);
 
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "id", ignore = true)
     TaskEntity toEntity(CreateTaskRequestPortDto dto);
 
