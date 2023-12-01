@@ -32,3 +32,8 @@
 - s3 client
 - cloudfront client
 - dynamodb client
+
+#### kafka
+- producer
+- consumer
+- avro
