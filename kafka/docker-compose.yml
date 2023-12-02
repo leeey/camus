@@ -66,6 +66,24 @@ services:
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
     networks:
       - camus-kafka
+  camus-kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    restart: always
+    container_name: camus-kafka-ui
+    ports:
+      - '9095:8080'
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=camus-kafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=camus-kafka-1:29092,camus-kafka-2:29092,camus-kafka-3:29092
+      - DYNAMIC_CONFIG_ENABLED=true
+      - KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED=true
+      - KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED=true
+    depends_on:
+      - camus-kafka-1
+      - camus-kafka-2
+      - camus-kafka-3
+    networks:
+      - camus-kafka
   schema-registry:
     image: confluentinc/cp-schema-registry
     container_name: schema-registry
@@ -78,7 +96,7 @@ services:
       # List of Kafka brokers to connect to.
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'camus-kafka-1:29092,camus-kafka-2:29092,camus-kafka-3:29092'
       # Comma-separated list of listeners for API requests supporting HTTP or HTTPS.
-      SCHEMA_REGISTRY_LISTENERS: 'http://0.0.0.0:18081'
+      SCHEMA_REGISTRY_LISTENERS: 'http://schema-registry:18081'
     depends_on:
       - camus-kafka-1
       - camus-kafka-2

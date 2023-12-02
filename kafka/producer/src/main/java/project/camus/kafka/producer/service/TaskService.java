@@ -1,6 +1,7 @@
 package project.camus.kafka.producer.service;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,6 @@ public class TaskService {
 
     private CompletableFuture<SendResult<String, Task>> sendMessage(Task task) {
 
-        return kafkaTemplate.send(new ProducerRecord<>(TOPIC, task));
+        return kafkaTemplate.send(new ProducerRecord<>(TOPIC, UUID.randomUUID().toString(), task));
     }
 }
