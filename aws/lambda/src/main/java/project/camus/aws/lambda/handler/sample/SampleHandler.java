@@ -14,7 +14,7 @@ import project.camus.aws.lambda.handler.sample.request.Headers;
 import project.camus.aws.lambda.handler.sample.request.PathParameters;
 import project.camus.aws.lambda.handler.sample.request.QueryStringParameters;
 import project.camus.aws.lambda.dto.RequestContext;
-import project.camus.aws.lambda.util.IOStreamUtil;
+import project.camus.aws.lambda.util.IOUtil;
 import project.camus.common.util.ObjectMapperUtil;
 
 @SuppressWarnings("all")
@@ -29,7 +29,7 @@ public class SampleHandler implements RequestStreamHandler {
 
         Map<String, Object> result = new HashMap<>();
 
-        try (PrintWriter writer = IOStreamUtil.getWriter(output)) {
+        try (PrintWriter writer = IOUtil.getWriter(output)) {
 
             Map<String, Object> event = ObjectMapperUtil.readInputStreamValue(input);
             RequestContext requestContext = ObjectMapperUtil.convertValue(event.get(LambdaEventParams.REQUEST_CONTEXT), RequestContext.class);
