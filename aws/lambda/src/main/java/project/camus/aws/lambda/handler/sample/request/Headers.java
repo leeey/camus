@@ -6,7 +6,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Headers {
-
-    private String authorization;
     //TODO: add headers to use
 }
