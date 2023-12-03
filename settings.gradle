@@ -46,4 +46,5 @@ include 'kafka:avro'
 findProject(':kafka:avro')?.name = 'avro'
 include 'aws:lambda'
 findProject(':aws:lambda')?.name = 'lambda'
+include 'batch'
 

@@ -1,0 +1,19 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:webmvc')
+    implementation project(':aws:client')
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    runtimeOnly 'com.h2database:h2:2.2.224'
+    testRuntimeOnly 'com.h2database:h2:2.2.224'
+}
+
+test {
+    useJUnitPlatform()
+}
