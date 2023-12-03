@@ -1,10 +1,12 @@
 package project.camus.aws.client.builder;
 
-import project.camus.aws.client.common.CamusAwsCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import org.springframework.stereotype.Component;
+import project.camus.aws.client.common.CamusAwsCredentials;
 
-public abstract class AwsDynamoDBBuilder implements CamusAwsCredentials {
+@Component
+public class AwsDynamoDBBuilder implements CamusAwsCredentials {
 
     public AmazonDynamoDB build() {
 
