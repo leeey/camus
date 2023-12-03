@@ -1,0 +1,30 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:webmvc')
+    implementation 'com.amazonaws:aws-lambda-java-runtime-interface-client:2.4.1'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': ''
+    }
+    archiveFileName  = 'camus-aws-lambda.jar'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}

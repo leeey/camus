@@ -34,6 +34,8 @@ include 'observability:task'
 findProject(':observability:task')?.name = 'task'
 
 include 'aws'
+include 'aws:client'
+findProject(':aws:client')?.name = 'client'
 
 include 'kafka'
 include 'kafka:producer'
@@ -42,4 +44,6 @@ include 'kafka:consumer'
 findProject(':kafka:consumer')?.name = 'consumer'
 include 'kafka:avro'
 findProject(':kafka:avro')?.name = 'avro'
+include 'aws:lambda'
+findProject(':aws:lambda')?.name = 'lambda'
 
