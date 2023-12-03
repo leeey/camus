@@ -1,0 +1,25 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:webmvc')
+    implementation "com.amazonaws:aws-java-sdk-kms:${awsVersion}"
+    implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
+    implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsVersion}"
+    implementation "com.amazonaws:aws-java-sdk-cloudfront:${awsVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
