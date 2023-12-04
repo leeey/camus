@@ -1,5 +1,9 @@
 package project.camus.aws.lambda.constants;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LambdaEventConstants {
 
     public static final String HEADERS = "headers";
