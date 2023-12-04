@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-import project.camus.aws.lambda.constants.LambdaEventParams;
+import project.camus.aws.lambda.constants.LambdaEventConstants;
 import project.camus.aws.lambda.handler.sample.request.Headers;
 import project.camus.aws.lambda.handler.sample.request.PathParameters;
 import project.camus.aws.lambda.handler.sample.request.QueryStringParameters;
@@ -32,12 +32,12 @@ public class SampleHandler implements RequestStreamHandler {
         try (PrintWriter writer = IOUtil.getWriter(output)) {
 
             Map<String, Object> event = ObjectMapperUtil.readInputStreamValue(input);
-            RequestContext requestContext = ObjectMapperUtil.convertValue(event.get(LambdaEventParams.REQUEST_CONTEXT), RequestContext.class);
-            Headers headers = ObjectMapperUtil.convertValue(event.get(LambdaEventParams.HEADERS), Headers.class);
-            PathParameters pathParameters = ObjectMapperUtil.convertValue(event.get(LambdaEventParams.PATH_PARAMETERS), PathParameters.class);
-            QueryStringParameters queryStringParameters = ObjectMapperUtil.convertValue(event.get(LambdaEventParams.QUERY_STRING_PARAMETERS),
+            RequestContext requestContext = ObjectMapperUtil.convertValue(event.get(LambdaEventConstants.REQUEST_CONTEXT), RequestContext.class);
+            Headers headers = ObjectMapperUtil.convertValue(event.get(LambdaEventConstants.HEADERS), Headers.class);
+            PathParameters pathParameters = ObjectMapperUtil.convertValue(event.get(LambdaEventConstants.PATH_PARAMETERS), PathParameters.class);
+            QueryStringParameters queryStringParameters = ObjectMapperUtil.convertValue(event.get(LambdaEventConstants.QUERY_STRING_PARAMETERS),
                 QueryStringParameters.class);
-            Map<String, Object> body = ObjectMapperUtil.readString(event.get(LambdaEventParams.BODY).toString());
+            Map<String, Object> body = ObjectMapperUtil.readString(event.get(LambdaEventConstants.BODY).toString());
 
             //TODO: handle event
             writer.write("");
