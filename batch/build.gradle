@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
-    implementation project(':aws:client')
+    implementation project(':common:common-webmvc')
+    implementation project(':aws:aws-client')
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 

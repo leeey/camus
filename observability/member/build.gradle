@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
+    implementation project(':common:common-webmvc')
     implementation platform('io.micrometer:micrometer-tracing-bom:latest.release')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'

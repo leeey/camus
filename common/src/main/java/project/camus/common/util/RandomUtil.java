@@ -10,8 +10,8 @@ public class RandomUtil {
 
     private static final Random random = new SecureRandom();
 
-    public static int nextInt() {
+    public static int nextInt(int bound) {
 
-        return random.nextInt();
+        return random.nextInt(bound);
     }
 }

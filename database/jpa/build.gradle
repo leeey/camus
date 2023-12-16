@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':common:webmvc')
+    implementation project(':common:common-webmvc')
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2:2.2.224'
 

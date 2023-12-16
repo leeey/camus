@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
+    implementation project(':common:common-webmvc')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation platform('io.micrometer:micrometer-tracing-bom:latest.release')
 

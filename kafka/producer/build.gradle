@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
-    implementation project(':kafka:avro')
+    implementation project(':common:common-webmvc')
+    implementation project(':kafka:kafka-avro')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation platform("org.springframework.cloud:spring-cloud-stream:4.0.4")
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-streams'

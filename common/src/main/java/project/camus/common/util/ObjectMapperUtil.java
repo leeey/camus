@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Configuration;
 import project.camus.common.exception.CamusServerException;
 
-@Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ObjectMapperUtil {
 

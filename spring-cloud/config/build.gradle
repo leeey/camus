@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
-    implementation project(':aws:client')
+    implementation project(':common:common-webmvc')
+    implementation project(':aws:aws-client')
     implementation platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     implementation 'org.springframework.cloud:spring-cloud-config-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
