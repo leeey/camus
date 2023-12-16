@@ -19,41 +19,43 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.FailureResponse;
 import project.camus.common.SuccessResponse;
-import project.camus.jwt.webflux.api.handler.JwtCreateTokenHandler;
-import project.camus.jwt.webflux.api.dto.request.JwtCreateTokenRequestDto;
-import project.camus.jwt.webflux.api.handler.JwtGetUsernameHandler;
-import project.camus.reactive.common.ResponseWrapper;
+import project.camus.jwt.webflux.api.dto.request.CreateJwtRequestDto;
+import project.camus.jwt.webflux.api.handler.CreateJwtHandler;
+import project.camus.jwt.webflux.api.handler.GetUsernameHandler;
+import project.camus.webflux.common.ResponseWrapper;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class JwtRouter {
+public class UserRouter {
 
-    private final JwtCreateTokenHandler jwtCreateTokenHandler;
+    private final CreateJwtHandler createJwtHandler;
 
-    private final JwtGetUsernameHandler jwtGetUsernameHandler;
+    private final GetUsernameHandler getUsernameHandler;
 
     @RouterOperations({
-        @RouterOperation(path = "/jwt/tokens", produces = {
+        @RouterOperation(path = "/users/jwt", produces = {
             MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.POST,
-            beanClass = JwtCreateTokenHandler.class, beanMethod = "handle",
+            beanClass = CreateJwtHandler.class, beanMethod = "handle",
             operation = @Operation(operationId = "createJwtToken",
-                tags = {"JWT"},
+                tags = {"user"},
                 responses = {
                     @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
                     @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class)))},
-                requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = JwtCreateTokenRequestDto.class))))
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = @Content(schema = @Schema(implementation = FailureResponse.class)))},
+                requestBody = @RequestBody(content = @Content(schema = @Schema(implementation = CreateJwtRequestDto.class))))
         ),
-        @RouterOperation(path = "/jwt/username", produces = {
+        @RouterOperation(path = "/users/username", produces = {
             MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET,
-            beanClass = JwtGetUsernameHandler.class, beanMethod = "handle",
+            beanClass = GetUsernameHandler.class, beanMethod = "handle",
             operation = @Operation(operationId = "getJwtUsername",
-                tags = {"JWT"},
+                tags = {"user"},
                 responses = {
                     @ApiResponse(responseCode = "200", description = "SUCCESS", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
                     @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
-                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class)))
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(implementation = FailureResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR", content = @Content(schema = @Schema(implementation = FailureResponse.class)))
                 }
             )
         )
@@ -62,10 +64,10 @@ public class JwtRouter {
     public RouterFunction<ServerResponse> jwtRouterFunction() {
 
         return RouterFunctions.route()
-            .path("/jwt", builder -> builder
+            .path("/users/", builder -> builder
                 .nest(RequestPredicates.accept(MediaType.APPLICATION_JSON), nestBuilder -> nestBuilder
-                    .POST("/tokens", jwtCreateTokenHandler)
-                    .GET("/username", jwtGetUsernameHandler)))
+                    .POST("jwt", createJwtHandler)
+                    .GET("/username", getUsernameHandler)))
             .onError(Exception.class, (exception, request) -> ResponseWrapper.fail(exception))
             .build();
     }

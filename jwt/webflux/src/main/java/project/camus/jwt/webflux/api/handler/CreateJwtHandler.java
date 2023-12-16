@@ -8,27 +8,27 @@ import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.util.ValidationUtil;
-import project.camus.jwt.webflux.config.security.JwtTokenProvider;
-import project.camus.jwt.webflux.api.dto.request.JwtCreateTokenRequestDto;
-import project.camus.reactive.common.ResponseWrapper;
+import project.camus.jwt.webflux.config.security.JwtProvider;
+import project.camus.jwt.webflux.api.dto.request.CreateJwtRequestDto;
+import project.camus.webflux.common.ResponseWrapper;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtCreateTokenHandler implements HandlerFunction<ServerResponse> {
+public class CreateJwtHandler implements HandlerFunction<ServerResponse> {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
 
     @NonNull
     @Override
     public Mono<ServerResponse> handle(@NonNull ServerRequest request) {
 
-        return request.bodyToMono(JwtCreateTokenRequestDto.class)
+        return request.bodyToMono(CreateJwtRequestDto.class)
             .doOnNext(ValidationUtil::validate)
-            .doOnNext(JwtCreateTokenRequestDto::validate)
+            .doOnNext(CreateJwtRequestDto::validate)
             .flatMap(dto -> {
-                String token = jwtTokenProvider.createToken(dto.getUsername());
+                String token = jwtProvider.createToken(dto.getUsername());
                 return ResponseWrapper.success(token);
             });
     }

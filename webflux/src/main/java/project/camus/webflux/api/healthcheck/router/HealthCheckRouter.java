@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import project.camus.reactive.common.ResponseWrapper;
+import project.camus.webflux.common.ResponseWrapper;
 import project.camus.webflux.api.healthcheck.handler.HealthCheckHandler;
 
 @Slf4j

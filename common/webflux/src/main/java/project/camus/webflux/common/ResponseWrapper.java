@@ -1,4 +1,4 @@
-package project.camus.reactive.common;
+package project.camus.webflux.common;
 
 import java.util.List;
 import lombok.AccessLevel;
@@ -29,19 +29,22 @@ public class ResponseWrapper {
             return ServerResponse.status(HttpStatus.BAD_REQUEST)
                 .bodyValue(FailureResponse.builder()
                     .timestamp(System.currentTimeMillis())
-                    .errors(List.of(camusClientException.getMessage())).build());
+                    .errors(List.of(camusClientException.getMessage()))
+                    .build());
         }
 
         if (exception instanceof CamusServerException camusServerException) {
             return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .bodyValue(FailureResponse.builder()
                     .timestamp(System.currentTimeMillis())
-                    .errors(List.of(camusServerException.getMessage())).build());
+                    .errors(List.of(camusServerException.getMessage()))
+                    .build());
         }
 
         return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .bodyValue(FailureResponse.builder()
                 .timestamp(System.currentTimeMillis())
-                .errors(List.of(exception.getMessage())).build());
+                .errors(List.of(exception.getMessage()))
+                .build());
     }
 }

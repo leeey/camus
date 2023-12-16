@@ -71,4 +71,13 @@ public class ObjectMapperUtil {
             throw new CamusServerException(e);
         }
     }
+
+    public static byte[] writeValueAsBytes(Object value) {
+
+        try {
+            return getInstance().writeValueAsBytes(value);
+        } catch (JsonProcessingException e) {
+            throw new CamusServerException(e);
+        }
+    }
 }

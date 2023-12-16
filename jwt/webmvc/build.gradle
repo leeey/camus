@@ -1,0 +1,20 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:common-webmvc')
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2'
+
+    implementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+    useJUnitPlatform()
+}
