@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
+    implementation project(':common:common-webmvc')
     implementation "com.amazonaws:aws-java-sdk-kms:${awsVersion}"
     implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
     implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsVersion}"

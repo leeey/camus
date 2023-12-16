@@ -1,0 +1,14 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webflux-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:common-webflux')
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2'
+}
+
+test {
+    useJUnitPlatform()
+}

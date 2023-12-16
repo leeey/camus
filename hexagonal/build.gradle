@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':common:webmvc')
-    implementation project(':database:jpa')
+    implementation project(':common:common-webmvc')
+    implementation project(':database:database-jpa')
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 }
 
