@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import project.camus.reactive.api.lotto.dto.response.LottoYearlyMostNumbersResponseDto;
 import project.camus.reactive.common.ResponseWrapper;
 import project.camus.webflux.api.lotto.dto.LottoHistoryDto;
 import project.camus.webflux.api.lotto.dto.LottoNumberCountDto;
+import project.camus.webflux.api.lotto.dto.response.LottoYearlyMostNumbersResponseDto;
 import project.camus.webflux.api.lotto.util.LottoHistoryUtil;
 import reactor.core.publisher.Mono;
 
