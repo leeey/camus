@@ -39,3 +39,7 @@
 - avro
 
 #### batch
+
+#### jwt
+- webmvc
+- webflux

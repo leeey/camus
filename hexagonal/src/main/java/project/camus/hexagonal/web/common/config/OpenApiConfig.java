@@ -23,7 +23,7 @@ public class OpenApiConfig {
             .addOpenApiCustomizer(e -> e.info(new Info()
                     .title("Task - V1")
                     .version("1.0"))
-                .servers(List.of(new Server().url("http://127.0.0.1:" + port))))
+                .servers(List.of(new Server().url("http://localhost:" + port))))
             .build();
     }
 }

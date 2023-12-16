@@ -1,4 +1,4 @@
-package project.camus.jwt.webflux.config.security;
+package project.camus.jwt.webmvc.config.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,35 +12,30 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 
     private final byte[] tokenSecretBytes;
 
     private final long expirationMs;
 
-    public JwtTokenProvider(@Value("${jwt.tokenSecret}") String tokenSecret,
-        @Value("${jwt.expirationMs}") long expirationMs) {
+    public JwtProvider(@Value("${jwt.token-secret}") String tokenSecret,
+        @Value("${jwt.expiration-ms}") long expirationMs) {
 
         this.tokenSecretBytes = Base64.getEncoder().encode(tokenSecret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
     }
 
-    public String createToken(String username) {
+    public String createToken(String userId) {
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-            .subject(username)
+            .subject(userId)
             .issuedAt(new Date())
             .expiration(expiryDate)
             .signWith(Keys.hmacShaKeyFor(tokenSecretBytes))
             .compact();
-    }
-
-    public String getUsername(String token) {
-
-        return getClaims(token).getSubject();
     }
 
     public Claims getClaims(String token) {

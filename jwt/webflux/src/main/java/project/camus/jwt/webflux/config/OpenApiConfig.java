@@ -23,10 +23,10 @@ public class OpenApiConfig {
     public GroupedOpenApi authOpenApi() {
 
         return GroupedOpenApi.builder()
-            .group("jwt-test")
+            .group("jwt")
             .packagesToScan("project.camus.jwt.webflux.api")
             .addOpenApiCustomizer(e -> e.info(new Info()
-                    .title("JWT Test")
+                    .title("WebFlux JWT")
                     .version("1.0"))
                 .servers(List.of(new Server().url("http://localhost:" + port)))
                 .schemaRequirement(HttpHeaders.AUTHORIZATION,

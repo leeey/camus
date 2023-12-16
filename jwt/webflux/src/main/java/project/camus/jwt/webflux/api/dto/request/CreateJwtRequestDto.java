@@ -14,7 +14,7 @@ import project.camus.jwt.webflux.util.JwtRefreshTokenUtil;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtCreateTokenRequestDto {
+public class CreateJwtRequestDto {
 
     @NotBlank
     private String refreshToken;
