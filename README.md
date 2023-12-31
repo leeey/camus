@@ -22,6 +22,7 @@
 #### database
 - jpa
 - r2dbc
+- redis
 
 #### reactive
 - router function

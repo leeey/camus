@@ -1,0 +1,15 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webflux-conventions'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':common:common-webflux')
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+}
+
+test {
+    useJUnitPlatform()
+}

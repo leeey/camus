@@ -51,4 +51,6 @@ include 'jwt:webmvc'
 findProject(':jwt:webmvc')?.name = 'jwt-webmvc'
 include 'jwt:webflux'
 findProject(':jwt:webflux')?.name = 'jwt-webflux'
+include 'database:redis'
+findProject(':database:redis')?.name = 'redis'
 
