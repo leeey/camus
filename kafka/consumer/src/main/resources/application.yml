@@ -10,7 +10,7 @@ spring:
       properties:
         schema:
           registry:
-            url: http://localhost:18081
+            url: http://localhost:8081
         specific:
           avro:
             reader: true
