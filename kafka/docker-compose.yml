@@ -20,8 +20,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       CLUSTER_ID: dcOWu2MvRZWWKj7cfc9rsA
       KAFKA_LOG_DIRS: /tmp/broker-logs
-    volumes:
-      - ./data/broker-1:/var/lib/broker-1/data
     networks:
       - camus-kafka
   broker-2:
@@ -44,8 +42,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       CLUSTER_ID: dcOWu2MvRZWWKj7cfc9rsA
       KAFKA_LOG_DIRS: /tmp/broker-logs
-    volumes:
-      - ./data/broker-2:/var/lib/broker-2/data
     networks:
       - camus-kafka
   broker-3:
@@ -68,8 +64,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
       CLUSTER_ID: dcOWu2MvRZWWKj7cfc9rsA
       KAFKA_LOG_DIRS: /tmp/broker-logs
-    volumes:
-      - ./data/broker-3:/var/lib/broker-3/data
     networks:
       - camus-kafka
   schema-registry:
