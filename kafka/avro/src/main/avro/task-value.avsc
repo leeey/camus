@@ -19,6 +19,16 @@
         },
         "null"
       ]
+    },
+    {
+      "name": "author",
+      "type": [
+        {
+          "type": "string",
+          "avro.java.string": "String"
+        },
+        "null"
+      ]
     }
   ]
 }

@@ -3,14 +3,6 @@ server:
 spring:
   application:
     name: camus-kafka-consumer
-  kafka:
-    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
-    consumer:
-      auto-offset-reset: earliest
-      properties:
-        schema:
-          registry:
-            url: http://localhost:8081
-        specific:
-          avro:
-            reader: true
+kafka:
+  bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+  schema-registry-url: http://localhost:8081

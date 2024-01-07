@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+    id "com.github.imflog.kafka-schema-registry-gradle-plugin" version "1.12.0"
 }
 
 repositories {
@@ -10,6 +10,17 @@ repositories {
 
 dependencies {
     implementation "org.apache.avro:avro:1.11.3"
+}
+
+schemaRegistry {
+    url = 'http://localhost:8081'
+    quiet = true
+    register {
+        subject('task-value', "${projectDir}/src/main/avro/task-value.avsc", 'AVRO')
+    }
+    config {
+        subject('task-value', 'NONE')
+    }
 }
 
 test {
