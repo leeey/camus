@@ -1,7 +1,6 @@
 package project.camus.kafka.producer.service;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ import project.camus.kafka.producer.controller.request.TaskRequest;
 @RequiredArgsConstructor
 public class TaskService {
 
-    private static final String TOPIC = "task-topic";
+    private static final String TOPIC = "task";
 
     private final KafkaTemplate<String, Task> kafkaTemplate;
 
@@ -29,6 +28,7 @@ public class TaskService {
         Task task = Task.newBuilder()
             .setTitle(request.getTitle())
             .setDetails(request.getDetails())
+            .setAuthor("camus")
             .build();
         CompletableFuture<SendResult<String, Task>> future = sendMessage(task);
         future.whenComplete((result, ex) -> {
@@ -42,6 +42,6 @@ public class TaskService {
 
     private CompletableFuture<SendResult<String, Task>> sendMessage(Task task) {
 
-        return kafkaTemplate.send(new ProducerRecord<>(TOPIC, UUID.randomUUID().toString(), task));
+        return kafkaTemplate.send(new ProducerRecord<>(TOPIC, task));
     }
 }

@@ -4,9 +4,9 @@
 - 메시지 발행 구독 시스템 (message pub/sub system)
 - 분산 커밋 로그 (distributed commit log)
 - 분산 스트리밍 플랫폼 (distributed streaming platform)
-- 데이터의 기본 단위를 message 라고 한다. byte[] 데이터
+- data 의 기본 단위를 message 라고 한다. byte[] 
 - message 는 key 라는 metadata 를 포함할 수 있다.
-- message 데이터는 topic 으로 분류된 partition 에 수록된다.
+- message data 는 topic 으로 분류된 partition 에 수록된다.
 - 일관된 partition 의 결정을 위해 hash key 를 생성한다.
 - 여러 개의 message 를 모아서 batch 형태로 partition 에 수록한다. (효율성)
 - batch 는 latency / throughput 과 trade-off 관계
@@ -19,10 +19,10 @@
 #### topic & partition
 - kafka 의 message 는 topic 으로 분류된다.
 - 하나의 topic 은 여러개의 partition 으로 구성될 수 있다.
-- commit log 데이터의 관점에서 partition 은 하나의 log 에 해당한다.
+- commit log data 의 관점에서 partition 은 하나의 log 에 해당한다.
 - message 는 partition 에 추가할 수만 있고 맨 앞에서 제일 끝까지의 순서로 읽힌다.
 - message 처리 순서는 topic 이 아닌 partition 별로 유지 관리된다.
-- stream 은 partition 개수와 관계없이 하나의 topic 데이터로 간주된다.
+- stream 은 partition 개수와 관계없이 하나의 topic data 로 간주된다.
 - stream 은 producer 로부터 consumer 로 이동되는 연속적인 data 를 나타낸다.
 
 #### producer & consumer
