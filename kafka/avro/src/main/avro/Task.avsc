@@ -1,1 +1,24 @@
-{"type":"record","name":"Task","namespace":"project.camus.kafka.avro","fields":[{"name":"title","type":{"type":"string","avro.java.string":"String"}},{"name":"details","type":[{"type":"string","avro.java.string":"String"},"null"]}]}
+{
+  "type": "record",
+  "name": "Task",
+  "namespace": "project.camus.kafka.avro",
+  "fields": [
+    {
+      "name": "title",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "details",
+      "type": [
+        {
+          "type": "string",
+          "avro.java.string": "String"
+        },
+        "null"
+      ]
+    }
+  ]
+}
