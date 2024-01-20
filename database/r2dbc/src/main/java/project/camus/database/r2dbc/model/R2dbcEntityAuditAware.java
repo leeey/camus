@@ -1,4 +1,4 @@
-package project.camus.database.r2dbc.config;
+package project.camus.database.r2dbc.model;
 
 import org.springframework.data.domain.ReactiveAuditorAware;
 import org.springframework.lang.NonNull;
