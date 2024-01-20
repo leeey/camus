@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.test.context.ContextConfiguration
+import project.camus.database.r2dbc.config.R2dbcConfig
+import project.camus.database.r2dbc.model.R2dbcEntityAuditAware
 import spock.lang.Specification
 
 @EnableAutoConfiguration
 @DataR2dbcTest
-@ContextConfiguration(classes = [MemberDao, ObjectMapper, project.camus.database.r2dbc.config.R2dbcConfig, project.camus.database.r2dbc.config.R2dbcEntityAuditAware])
+@ContextConfiguration(classes = [MemberDao, ObjectMapper, R2dbcConfig, R2dbcEntityAuditAware])
 class R2dbcMemberDaoTest extends Specification {
 
     @Autowired
