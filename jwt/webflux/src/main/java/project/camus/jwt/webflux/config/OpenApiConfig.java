@@ -28,7 +28,7 @@ public class OpenApiConfig {
             .addOpenApiCustomizer(e -> e.info(new Info()
                     .title("WebFlux JWT")
                     .version("1.0"))
-                .servers(List.of(new Server().url("http://localhost:" + port)))
+                .servers(List.of(new Server().url("/")))
                 .schemaRequirement(HttpHeaders.AUTHORIZATION,
                     new SecurityScheme().in(In.HEADER)
                         .scheme("bearer")
