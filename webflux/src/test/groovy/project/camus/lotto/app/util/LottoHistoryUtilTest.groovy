@@ -11,6 +11,6 @@ class LottoHistoryUtilTest extends Specification {
         def histories = LottoHistoryUtil.getHistories()
 
         then:
-        histories.size() == 1086
+        histories.size() == 1103
     }
 }

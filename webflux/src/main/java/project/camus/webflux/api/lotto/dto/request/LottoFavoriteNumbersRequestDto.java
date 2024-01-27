@@ -18,8 +18,7 @@ import project.camus.common.util.ValidationUtil;
 @NoArgsConstructor
 public class LottoFavoriteNumbersRequestDto {
 
-    @Size(min = 1, max = 5)
-    @NotEmpty
+    @Size(max = 5)
     private Set<Integer> favoriteNumbers;
 
     @Max(10)
