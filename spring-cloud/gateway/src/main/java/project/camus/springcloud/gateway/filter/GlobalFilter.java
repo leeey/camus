@@ -11,7 +11,6 @@ import org.springframework.cloud.gateway.filter.OrderedGatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -26,14 +25,10 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
     public GatewayFilter apply(Config config) {
 
         return new OrderedGatewayFilter((exchange, chain) -> {
-            log.info(config.filterName + " started.");
             String traceId = UUID.randomUUID().toString();
-            log.info("request trace-id: {}", traceId);
             exchange.getRequest().mutate().header(Config.TRACE_ID, traceId).build();
-
-            return chain.filter(exchange)
-                .then(Mono.fromRunnable(() -> log.info("response trace-id: {}",
-                    exchange.getResponse().getHeaders().getFirst(Config.TRACE_ID))));
+            exchange.getResponse().getHeaders().add(Config.TRACE_ID, traceId);
+            return chain.filter(exchange);
         }, Ordered.HIGHEST_PRECEDENCE);
     }
 

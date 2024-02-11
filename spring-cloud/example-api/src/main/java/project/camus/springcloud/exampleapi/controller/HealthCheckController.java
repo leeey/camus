@@ -28,6 +28,7 @@ public class HealthCheckController {
 
         return ResponseWrapper.success(Map.of("status", "OK",
             "port", request.getServerPort(),
+            "trace-id", request.getHeader("Trace-Id"),
             "version", Objects.requireNonNullElse(environment.getProperty("version"), "undefined")));
     }
 }
