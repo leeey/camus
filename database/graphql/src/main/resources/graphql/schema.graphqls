@@ -1,0 +1,14 @@
+type Query {
+    findById(id: String): User
+}
+
+type User {
+    id: ID!
+    name: String
+    email: String
+    age: Int
+}
+
+schema {
+    query: Query
+}

@@ -1,0 +1,17 @@
+plugins {
+    id 'groovy'
+    id 'project.camus.library-webmvc-conventions'
+}
+
+dependencies {
+    implementation project(':common:common-webmvc')
+    implementation 'org.springframework.graphql:spring-graphql'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+
+    testImplementation 'org.springframework.graphql:spring-graphql-test:1.2.4'
+}
+
+test {
+    useJUnitPlatform()
+}

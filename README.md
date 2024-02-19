@@ -23,6 +23,7 @@
 - jpa
 - r2dbc
 - redis
+- graphql
 
 #### reactive
 - router function
