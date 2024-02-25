@@ -1,6 +1,5 @@
 package project.camus.aws.client;
 
-import project.camus.aws.client.builder.AwsKmsBuilder;
 import com.amazonaws.services.kms.model.DecryptRequest;
 import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.services.kms.model.EncryptionAlgorithmSpec;
@@ -9,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
+import project.camus.aws.client.builder.AwsKmsBuilder;
 
 @Component
 @RequiredArgsConstructor

@@ -19,10 +19,10 @@ import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import project.camus.common.FailureResponse;
 import project.camus.common.SuccessResponse;
-import project.camus.webflux.common.ResponseWrapper;
 import project.camus.webflux.api.lotto.dto.request.LottoFavoriteNumbersRequestDto;
 import project.camus.webflux.api.lotto.handler.LottoFavoriteNumbersHandler;
 import project.camus.webflux.api.lotto.handler.LottoYearlyMostNumbersHandler;
+import project.camus.webflux.common.ResponseWrapper;
 
 @Slf4j
 @Configuration

@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import project.camus.database.jpa.model.task.TaskEntity;
 import project.camus.hexagonal.domain.task.mapper.TaskServiceMapper;
 import project.camus.hexagonal.infra.task.adapter.TaskAdapter;
 import project.camus.hexagonal.port.task.dto.TaskPortDto;
 import project.camus.hexagonal.port.task.dto.response.FindAllTasksResponsePortDto;
-import project.camus.database.jpa.model.task.TaskEntity;
 
 @Slf4j
 @Service

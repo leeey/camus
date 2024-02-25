@@ -1,8 +1,8 @@
 package project.camus.aws.client;
 
-import project.camus.aws.client.builder.AwsS3Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import project.camus.aws.client.builder.AwsS3Builder;
 
 @Component
 @RequiredArgsConstructor

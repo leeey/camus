@@ -1,9 +1,9 @@
 package project.camus.aws.client.builder;
 
-import project.camus.aws.client.common.CamusAwsCredentials;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClientBuilder;
 import org.springframework.stereotype.Component;
+import project.camus.aws.client.common.CamusAwsCredentials;
 
 @Component
 public class AwsKmsBuilder implements CamusAwsCredentials {

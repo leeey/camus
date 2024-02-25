@@ -2,7 +2,6 @@ package project.camus.webflux.api.lotto.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 import lombok.AllArgsConstructor;
