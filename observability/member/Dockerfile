@@ -1,4 +1,4 @@
 FROM amazoncorretto:21
-ADD /build/libs/member.jar /member.jar
+COPY build/libs/observability-member.jar /member.jar
 ENV JAVA_OPTS=""
 ENTRYPOINT ["java", "-jar", "/member.jar"]
