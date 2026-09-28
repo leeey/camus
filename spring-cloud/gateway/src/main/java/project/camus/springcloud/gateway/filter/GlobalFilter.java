@@ -26,9 +26,10 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
 
         return new OrderedGatewayFilter((exchange, chain) -> {
             String traceId = UUID.randomUUID().toString();
-            exchange.getRequest().mutate().header(Config.TRACE_ID, traceId).build();
             exchange.getResponse().getHeaders().add(Config.TRACE_ID, traceId);
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate()
+                .request(request -> request.header(Config.TRACE_ID, traceId))
+                .build());
         }, Ordered.HIGHEST_PRECEDENCE);
     }
 
