@@ -6,10 +6,11 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':common:common-webmvc')
-    implementation "com.amazonaws:aws-java-sdk-kms:${awsVersion}"
-    implementation "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
-    implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsVersion}"
-    implementation "com.amazonaws:aws-java-sdk-cloudfront:${awsVersion}"
+    implementation platform("software.amazon.awssdk:bom:${awsVersion}")
+    implementation 'software.amazon.awssdk:kms'
+    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:dynamodb'
+    implementation 'software.amazon.awssdk:cloudfront'
 }
 
 test {

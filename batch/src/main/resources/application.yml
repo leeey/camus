@@ -28,3 +28,8 @@ spring:
     name: database-jpa
   devtools:
     add-properties: false
+camus:
+  aws:
+    region: ${AWS_REGION:ap-northeast-2}
+    kms:
+      key-id: ${AWS_KMS_KEY_ID:f096a65c-38d6-4a2b-b0c5-7f5c81636367}

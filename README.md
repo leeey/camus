@@ -49,3 +49,5 @@
 #### required environment variables
 - `JWT_TOKEN_SECRET` : jwt (webmvc, webflux) token signing secret (256 bit 이상 랜덤 값)
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
+- `AWS_KMS_KEY_ID` : batch, spring cloud config 에서 사용하는 AWS KMS key id
+- `AWS_REGION` : AWS region (기본값 `ap-northeast-2`)

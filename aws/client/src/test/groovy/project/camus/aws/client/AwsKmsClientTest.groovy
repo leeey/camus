@@ -1,24 +1,25 @@
 package project.camus.aws.client
 
-import com.amazonaws.services.kms.AWSKMS
-import com.amazonaws.services.kms.model.DecryptRequest
-import com.amazonaws.services.kms.model.DecryptResult
-import com.amazonaws.services.kms.model.EncryptRequest
-import com.amazonaws.services.kms.model.EncryptResult
-import com.amazonaws.services.kms.model.EncryptionAlgorithmSpec
-import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import project.camus.aws.client.builder.AwsKmsBuilder
+import project.camus.aws.client.config.AwsProperties
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import software.amazon.awssdk.core.SdkBytes
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.kms.KmsClient
+import software.amazon.awssdk.services.kms.model.DecryptRequest
+import software.amazon.awssdk.services.kms.model.DecryptResponse
+import software.amazon.awssdk.services.kms.model.EncryptRequest
+import software.amazon.awssdk.services.kms.model.EncryptResponse
+import software.amazon.awssdk.services.kms.model.EncryptionAlgorithmSpec
 import spock.lang.Requires
 import spock.lang.Specification
 
 class AwsKmsClientTest extends Specification {
 
-    def kms = Mock(AWSKMS)
-    def builder = Stub(AwsKmsBuilder) {
-        build() >> kms
-    }
-    def client = new AwsKmsClient(builder)
+    static final String KEY_ID = "test-key-id"
+
+    def kms = Mock(KmsClient)
+    def client = new AwsKmsClient(kms, new AwsProperties("ap-northeast-2", new AwsProperties.Kms(KEY_ID)))
 
     def "encrypt & decrypt"() {
 
@@ -31,10 +32,10 @@ class AwsKmsClientTest extends Specification {
 
         then:
         1 * kms.encrypt({ EncryptRequest request ->
-            request.keyId != null &&
-                request.encryptionAlgorithm == EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256.toString() &&
-                StandardCharsets.UTF_8.decode(request.plaintext).toString() == word
-        }) >> new EncryptResult().withCiphertextBlob(ByteBuffer.wrap(cipherBytes))
+            request.keyId() == KEY_ID &&
+                request.encryptionAlgorithm() == EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256 &&
+                request.plaintext().asUtf8String() == word
+        }) >> EncryptResponse.builder().ciphertextBlob(SdkBytes.fromByteArray(cipherBytes)).build()
         cipher == Base64.encoder.encodeToString(cipherBytes)
 
         when:
@@ -42,19 +43,54 @@ class AwsKmsClientTest extends Specification {
 
         then:
         1 * kms.decrypt({ DecryptRequest request ->
-            request.ciphertextBlob == ByteBuffer.wrap(cipherBytes)
-        }) >> new DecryptResult().withPlaintext(ByteBuffer.wrap(word.getBytes(StandardCharsets.UTF_8)))
+            request.keyId() == KEY_ID && request.ciphertextBlob().asByteArray() == cipherBytes
+        }) >> DecryptResponse.builder().plaintext(SdkBytes.fromUtf8String(word)).build()
         plain == word
+    }
+
+    def "decrypt multi-line base64 cipher"() {
+
+        given:
+        def cipherBytes = new byte[100]
+        new Random(1).nextBytes(cipherBytes)
+        def multiLineCipher = Base64.encoder.encodeToString(cipherBytes).replaceAll(/(.{40})/, '$1\n')
+
+        when:
+        client.decrypt(multiLineCipher)
+
+        then:
+        1 * kms.decrypt({ DecryptRequest request -> request.ciphertextBlob().asByteArray() == cipherBytes }) >>
+            DecryptResponse.builder().plaintext(SdkBytes.fromUtf8String("plain")).build()
+    }
+
+    def "key-id is required"() {
+
+        given:
+        def noKeyClient = new AwsKmsClient(kms, new AwsProperties("ap-northeast-2", new AwsProperties.Kms(null)))
+
+        when:
+        noKeyClient.encrypt("hello")
+
+        then:
+        thrown(IllegalArgumentException)
+        0 * kms._
     }
 
     @Requires({ env.AWS_KMS_IT == 'true' })
     def "encrypt & decrypt with real aws kms"() {
 
         given:
-        def realClient = new AwsKmsClient(new AwsKmsBuilder())
-        def word = "hello"
+        def keyId = System.getenv("AWS_KMS_KEY_ID") ?: "f096a65c-38d6-4a2b-b0c5-7f5c81636367"
+        def kmsClient = KmsClient.builder()
+            .credentialsProvider(DefaultCredentialsProvider.builder().build())
+            .region(Region.AP_NORTHEAST_2)
+            .build()
+        def realClient = new AwsKmsClient(kmsClient, new AwsProperties("ap-northeast-2", new AwsProperties.Kms(keyId)))
 
         expect:
-        realClient.decrypt(realClient.encrypt(word)) == word
+        realClient.decrypt(realClient.encrypt("hello")) == "hello"
+
+        cleanup:
+        kmsClient.close()
     }
 }
