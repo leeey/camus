@@ -39,3 +39,8 @@ out/
 grafana-data
 
 kafka/data/
+
+### secrets ###
+*.jks
+*.p12
+.env

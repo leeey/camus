@@ -7,7 +7,7 @@ import org.springframework.cloud.config.server.encryption.KeyStoreTextEncryptorL
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
 import org.springframework.security.rsa.crypto.RsaAlgorithm;
 import project.camus.aws.client.AwsKmsClient;
@@ -15,13 +15,17 @@ import project.camus.aws.client.AwsKmsClient;
 @Configuration
 public class EncryptionConfig {
 
+    private final Resource keyStoreLocation;
+
     private final String keyStorePassword;
 
     private final AwsKmsClient awsKmsClient;
 
-    public EncryptionConfig(@Value("${key-store.password}") String keyStorePassword,
+    public EncryptionConfig(@Value("${key-store.location}") Resource keyStoreLocation,
+        @Value("${key-store.password}") String keyStorePassword,
         AwsKmsClient awsKmsClient) {
 
+        this.keyStoreLocation = keyStoreLocation;
         this.keyStorePassword = keyStorePassword;
         this.awsKmsClient = awsKmsClient;
     }
@@ -31,7 +35,7 @@ public class EncryptionConfig {
     public KeyStoreTextEncryptorLocator keyStoreTextEncryptorLocator() {
 
         KeyStore keyStore = new KeyStore();
-        keyStore.setLocation(new ClassPathResource(".keystore/camusConfigEncKey.jks"));
+        keyStore.setLocation(keyStoreLocation);
         keyStore.setAlias("camusConfigEncKey");
         keyStore.setPassword(awsKmsClient.decrypt(keyStorePassword));
 

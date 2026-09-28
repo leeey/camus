@@ -25,6 +25,7 @@ git:
     /GnqkbWR7z56Y2fJoOWIPpGffSQiv7Y4Os6Ozqoy65sV55DI10cV8dhAOWyhbI0xoRfowOBWzkclhAPBSzQDteFUwN1kjFiZk5
     +By3ZAQB6tIdmIxU10F4WTd4=
 key-store:
+  location: ${KEY_STORE_LOCATION:file:.keystore/camusConfigEncKey.jks}
   password: |
     Sp+1DLskVs7JJR0q/oaysNOpnUxU8M86S/DAAIAD24IVfkWeShQSECtF8b8qAnKAyV4+Xll
     /eMUPXnoQBn+fFc+a8rU8YTM68L0nCIc7H6erC
