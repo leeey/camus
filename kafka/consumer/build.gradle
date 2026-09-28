@@ -22,10 +22,6 @@ schemaRegistry {
     }
 }
 
-clean {
-    delete "${projectDir}/src/main/avro/"
-}
-
 test {
     useJUnitPlatform()
 }
