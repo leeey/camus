@@ -32,12 +32,7 @@ class JpaMemberDaoTest extends Specification {
         then:
         !createdMembers.empty
         createdMembers.size() == entities.size()
-        createdMembers.forEach(member -> {
-            member.createdAt != null
-            member.createdBy != null
-            member.lastModifiedAt != null
-            member.lastModifiedBy != null
-        })
+        createdMembers.every { it.createdAt != null && it.createdBy != null && it.lastModifiedAt != null && it.lastModifiedBy != null }
 
         when: "finaAllMembers"
         def allMembers = memberDao.finaAllMembers()
