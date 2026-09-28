@@ -2,7 +2,7 @@ package project.camus.batch.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 import project.camus.aws.client.AwsKmsClient;
 
 @Slf4j

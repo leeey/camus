@@ -42,7 +42,7 @@ public class WebFluxConfig implements WebFluxConfigurer {
             .authorizeExchange(spec -> spec
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/favicon.ico").permitAll()
-                .pathMatchers("/swagger-ui.html", "/webjars/swagger-ui/**", "/api-docs/**").permitAll()
+                .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll()
                 .pathMatchers(HttpMethod.GET, "/healthcheck").permitAll()
                 .pathMatchers(HttpMethod.POST, "/users/jwt").permitAll()
                 .anyExchange().authenticated())

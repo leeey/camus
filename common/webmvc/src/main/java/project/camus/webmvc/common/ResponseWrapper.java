@@ -6,7 +6,6 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.data.util.CastUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
@@ -23,10 +22,10 @@ public class ResponseWrapper {
         BodyBuilder builder = ResponseEntity.ok();
         addHeaders(builder, CamusConstants.TRACE_ID);
 
-        return builder.body(CastUtils.cast(SuccessResponse.builder()
+        return builder.body(SuccessResponse.<T>builder()
             .result(data)
             .timestamp(System.currentTimeMillis())
-            .build()));
+            .build());
     }
 
     public static <T> ResponseEntity<SuccessResponse<T>> success() {

@@ -1,15 +1,14 @@
 package project.camus.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.IOException;
 import java.io.InputStream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import project.camus.common.exception.CamusServerException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ObjectMapperUtil {
@@ -25,12 +24,10 @@ public class ObjectMapperUtil {
 
         private static ObjectMapper getMapper() {
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-            objectMapper.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
-
-            return objectMapper;
+            return JsonMapper.builder()
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .enable(DateTimeFeature.WRITE_DATES_WITH_ZONE_ID)
+                .build();
         }
     }
 
@@ -38,7 +35,7 @@ public class ObjectMapperUtil {
 
         try {
             return getInstance().writeValueAsString(t);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new CamusServerException(e);
         }
     }
@@ -57,7 +54,7 @@ public class ObjectMapperUtil {
         try {
             return getInstance().readValue(input, new TypeReference<>() {
             });
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new CamusServerException(e);
         }
     }
@@ -67,7 +64,7 @@ public class ObjectMapperUtil {
         try {
             return getInstance().readValue(value, new TypeReference<>() {
             });
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new CamusServerException(e);
         }
     }
@@ -76,7 +73,7 @@ public class ObjectMapperUtil {
 
         try {
             return getInstance().writeValueAsBytes(value);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new CamusServerException(e);
         }
     }

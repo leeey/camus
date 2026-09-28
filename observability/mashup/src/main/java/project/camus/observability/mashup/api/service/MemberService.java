@@ -1,6 +1,5 @@
 package project.camus.observability.mashup.api.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import feign.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +11,7 @@ import project.camus.common.exception.CamusServerException;
 import project.camus.common.util.ObjectMapperUtil;
 import project.camus.observability.mashup.domain.client.MemberFeignClient;
 import project.camus.observability.mashup.domain.dto.member.MemberDto;
+import tools.jackson.core.type.TypeReference;
 
 @Slf4j
 @Service

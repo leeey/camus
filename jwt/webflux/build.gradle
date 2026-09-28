@@ -7,12 +7,12 @@ dependencies {
     implementation project(':common')
     implementation project(':common:common-webflux')
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.2'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+    implementation 'tools.jackson.dataformat:jackson-dataformat-csv'
 
-    implementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {

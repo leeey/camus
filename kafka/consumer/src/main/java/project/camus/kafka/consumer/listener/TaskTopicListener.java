@@ -1,6 +1,5 @@
 package project.camus.kafka.consumer.listener;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.generic.GenericRecord;
@@ -12,6 +11,7 @@ import project.camus.common.util.ObjectMapperUtil;
 import project.camus.kafka.avro.Task;
 import project.camus.kafka.consumer.listener.dto.TaskDto;
 import project.camus.kafka.consumer.usecase.TaskUseCase;
+import tools.jackson.core.JacksonException;
 
 @Slf4j
 @Component
@@ -34,7 +34,7 @@ public class TaskTopicListener {
                 .details(task.getDetails())
                 .author(task.getAuthor())
                 .build());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new CamusServerException(e);
         }
     }

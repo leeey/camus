@@ -3,7 +3,7 @@ package project.camus.database.jpa.model.member
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.test.context.ContextConfiguration
 import project.camus.database.jpa.config.JpaConfig
 import project.camus.database.jpa.config.JpaEntityAuditAware

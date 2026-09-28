@@ -5,7 +5,7 @@ import static org.instancio.Select.field
 import org.instancio.Instancio
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ContextConfiguration
 import project.camus.database.jpa.config.JpaConfig

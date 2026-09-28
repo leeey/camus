@@ -2,15 +2,15 @@ package project.camus.batch.member;
 
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -42,7 +42,8 @@ public class MemberJobConfig {
         DataSource dataSource) {
 
         return new StepBuilder("memberStep", repository)
-            .<MemberRecord, MemberRecord>chunk(2, transactionManager)
+            .<MemberRecord, MemberRecord>chunk(2)
+            .transactionManager(transactionManager)
             .reader(memberItemReader())
             .processor(memberItemProcessor(awsKmsClient))
             .writer(memberItemWriter(dataSource))

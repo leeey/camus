@@ -5,42 +5,44 @@ spring:
     name: gateway
   cloud:
     gateway:
-      default-filters:
-        - name: GlobalFilter
-          args:
-            filterName: GlobalFilter
-        - StripPrefix=1
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: '*'
-            allowedMethods:
-              - OPTIONS
-              - POST
-              - GET
-              - PUT
-              - DELETE
-            allowedHeaders:
-              - Content-Type
-              - Authorization
-              - Access-Control-Allow-Origin
-              - Access-Control-Allow-Headers
-              - Access-Control-Allow-Methods
-              - Access-Control-Allow-Credentials
-              - Trace-Id
-      routes:
-        - id: example-api
-          uri: lb://EXAMPLE-API
-          predicates:
-            - Path=/example-api/**
-        - id: example-api
-          uri: lb://EXAMPLE-API
-          predicates:
-            - Path=/example-api/actuator/**
-            - Method=GET,POST
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/example-api/(?<path>.*), /$\{path}
+      server:
+        webflux:
+          default-filters:
+            - name: GlobalFilter
+              args:
+                filterName: GlobalFilter
+            - StripPrefix=1
+          globalcors:
+            corsConfigurations:
+              '[/**]':
+                allowedOrigins: '*'
+                allowedMethods:
+                  - OPTIONS
+                  - POST
+                  - GET
+                  - PUT
+                  - DELETE
+                allowedHeaders:
+                  - Content-Type
+                  - Authorization
+                  - Access-Control-Allow-Origin
+                  - Access-Control-Allow-Headers
+                  - Access-Control-Allow-Methods
+                  - Access-Control-Allow-Credentials
+                  - Trace-Id
+          routes:
+            - id: example-api
+              uri: lb://EXAMPLE-API
+              predicates:
+                - Path=/example-api/**
+            - id: example-api
+              uri: lb://EXAMPLE-API
+              predicates:
+                - Path=/example-api/actuator/**
+                - Method=GET,POST
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/example-api/(?<path>.*), /$\{path}
 eureka:
   client:
     register-with-eureka: true

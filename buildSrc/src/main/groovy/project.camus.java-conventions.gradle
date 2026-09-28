@@ -21,21 +21,19 @@ repositories {
 
 dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.data:spring-data-commons'
+    implementation 'org.springframework.boot:spring-boot-starter-aspectj'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-    implementation 'org.glassfish:jakarta.el:4.0.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-jackson'
 
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    implementation 'org.apache.commons:commons-lang3:3.13.0'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    implementation 'org.apache.commons:commons-lang3'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
-    testImplementation 'org.spockframework:spock-spring:2.3-groovy-4.0'
-    testImplementation 'org.instancio:instancio-core:3.3.0'
+    testImplementation 'org.spockframework:spock-core:2.4-groovy-5.0'
+    testImplementation 'org.spockframework:spock-spring:2.4-groovy-5.0'
+    testImplementation 'org.instancio:instancio-core:6.1.0'
 }

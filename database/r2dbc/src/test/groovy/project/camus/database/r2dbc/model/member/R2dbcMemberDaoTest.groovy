@@ -1,9 +1,8 @@
 package project.camus.database.r2dbc.model.member
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
+import org.springframework.boot.data.r2dbc.test.autoconfigure.DataR2dbcTest
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.test.context.ContextConfiguration
 import project.camus.database.r2dbc.config.R2dbcConfig
@@ -12,7 +11,7 @@ import spock.lang.Specification
 
 @EnableAutoConfiguration
 @DataR2dbcTest
-@ContextConfiguration(classes = [MemberDao, ObjectMapper, R2dbcConfig, R2dbcEntityAuditAware])
+@ContextConfiguration(classes = [MemberDao, R2dbcConfig, R2dbcEntityAuditAware])
 class R2dbcMemberDaoTest extends Specification {
 
     @Autowired

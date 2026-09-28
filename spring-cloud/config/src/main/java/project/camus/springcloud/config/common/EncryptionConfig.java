@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
-import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
-import org.springframework.security.rsa.crypto.RsaAlgorithm;
+import org.springframework.security.crypto.encrypt.KeyStoreKeyFactory;
+import org.springframework.security.crypto.encrypt.RsaAlgorithm;
 import project.camus.aws.client.AwsKmsClient;
 
 @Configuration
