@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':common:common-webflux')
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.15.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
 }
 
 test {
