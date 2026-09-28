@@ -1,16 +1,15 @@
 package project.camus.jwt.webflux.config.security;
 
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import project.camus.common.exception.CamusServerException;
 import reactor.core.publisher.Mono;
 
 
@@ -34,15 +33,11 @@ public class SecurityContextRepositoryImpl implements ServerSecurityContextRepos
         return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
             .filter(authHeader -> authHeader.startsWith("Bearer "))
             .map(authHeader -> authHeader.substring(7))
-            .flatMap(token -> {
-                Claims claims = jwtProvider.getClaims(token);
-                return jwtAuthenticationManager.authenticate(new UsernamePasswordAuthenticationToken(claims.getSubject(), null, List.of()))
-                    .map(auth -> {
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                        return SecurityContextHolder.getContext();
-                    });
-            })
-            .onErrorMap(CamusServerException::new);
+            .flatMap(token -> Mono.fromCallable(() -> jwtProvider.getClaims(token)))
+            .flatMap(claims -> jwtAuthenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(claims.getSubject(), null, List.of())))
+            .<SecurityContext>map(SecurityContextImpl::new)
+            .onErrorResume(e -> e instanceof JwtException || e instanceof IllegalArgumentException, e -> Mono.empty());
     }
 
 }
