@@ -25,7 +25,7 @@ public class LottoHistoryUtil {
         try (MappingIterator<LottoHistoryDto> mappingIterator = csvMapper
             .readerFor(LottoHistoryDto.class)
             .with(csvSchema())
-            .readValues(ResourceUtil.getPathResource(PATH).getFile())) {
+            .readValues(ResourceUtil.getPathResource(PATH).getInputStream())) {
 
             return mappingIterator.readAll();
         } catch (IOException e) {

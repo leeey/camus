@@ -34,6 +34,9 @@ public class LottoYearlyMostNumbersHandler implements HandlerFunction<ServerResp
         IntStream.rangeClosed(2002, Year.now().getValue())
             .forEach(year -> {
                 Map<Integer, List<Integer>> numberCountMap = getNumberCountMap(year, histories);
+                if (numberCountMap.isEmpty()) {
+                    return;
+                }
                 List<LottoNumberCountDto> numberCountDtoList = getNumberCountDtoList(numberCountMap);
                 List<Integer> mostNumbers = getMostNumbersOfYear(numberCountDtoList);
                 result.add(LottoYearlyMostNumbersResponseDto.builder().year(year).numbers(mostNumbers).build());
@@ -62,7 +65,7 @@ public class LottoYearlyMostNumbersHandler implements HandlerFunction<ServerResp
 
     private List<Integer> getMostNumbersOfYear(List<LottoNumberCountDto> numberCountMapList) {
 
-        return numberCountMapList.subList(0, 6).stream()
+        return numberCountMapList.subList(0, Math.min(6, numberCountMapList.size())).stream()
             .map(LottoNumberCountDto::getNumber)
             .sorted()
             .toList();

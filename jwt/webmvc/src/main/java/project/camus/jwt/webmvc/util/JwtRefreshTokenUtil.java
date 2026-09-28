@@ -25,7 +25,7 @@ public class JwtRefreshTokenUtil {
         try (MappingIterator<JwtRefreshTokenDto> mappingIterator = csvMapper
             .readerFor(JwtRefreshTokenDto.class)
             .with(csvSchema())
-            .readValues(ResourceUtil.getPathResource(PATH).getFile())) {
+            .readValues(ResourceUtil.getPathResource(PATH).getInputStream())) {
 
             return mappingIterator.readAll();
         } catch (IOException e) {
