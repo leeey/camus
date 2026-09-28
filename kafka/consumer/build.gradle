@@ -10,6 +10,9 @@ dependencies {
     implementation project(':common:common-webflux')
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
     implementation 'io.confluent:kafka-avro-serializer:8.1.6'
+
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:testcontainers-kafka'
 }
 
 schemaRegistry {

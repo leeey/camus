@@ -8,6 +8,8 @@ dependencies {
     implementation project(':common:common-webflux')
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    testImplementation 'org.testcontainers:testcontainers'
+
 }
 
 test {
