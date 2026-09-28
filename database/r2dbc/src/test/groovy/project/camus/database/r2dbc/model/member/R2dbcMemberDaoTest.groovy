@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
+import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.test.context.ContextConfiguration
 import project.camus.database.r2dbc.config.R2dbcConfig
 import project.camus.database.r2dbc.model.R2dbcEntityAuditAware
@@ -16,6 +17,12 @@ class R2dbcMemberDaoTest extends Specification {
 
     @Autowired
     MemberDao memberDao
+
+    @Autowired
+    MemberRepository memberRepository
+
+    @Autowired
+    DatabaseClient databaseClient
 
     def "test"() {
 
@@ -58,5 +65,22 @@ class R2dbcMemberDaoTest extends Specification {
         then:
         allMembers.size() != latestAllMembers.size()
         allMembers.size() + 1 == latestAllMembers.size()
+    }
+
+    def "update with toBuilder keeps created audit fields"() {
+
+        given:
+        def createdMember = memberDao.createMember(MemberEntity.builder().username("E").phone("111").build()).block()
+
+        when:
+        memberRepository.save(createdMember.toBuilder().phone("222").build()).block()
+        def row = databaseClient.sql("SELECT phone, created_at, created_by FROM member WHERE id = :id")
+                .bind("id", createdMember.id)
+                .fetch().one().block()
+
+        then:
+        row.phone == "222"
+        row.created_at != null
+        row.created_by != null
     }
 }

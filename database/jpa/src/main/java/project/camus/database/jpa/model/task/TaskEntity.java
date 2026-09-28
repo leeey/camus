@@ -7,20 +7,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
 import project.camus.database.jpa.model.JpaAuditEntity;
 
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @Getter
 @Entity
 @DynamicUpdate
 @Table(name = "task")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class TaskEntity extends JpaAuditEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

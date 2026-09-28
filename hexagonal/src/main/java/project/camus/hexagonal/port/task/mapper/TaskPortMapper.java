@@ -18,6 +18,10 @@ public interface TaskPortMapper extends CommonMapper {
 
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedAt", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     TaskEntity toEntity(CreateTaskRequestPortDto dto);
 
     TaskUseCaseDto toDto(TaskPortDto dto);

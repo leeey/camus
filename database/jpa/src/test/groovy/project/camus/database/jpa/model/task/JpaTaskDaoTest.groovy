@@ -43,6 +43,16 @@ class JpaTaskDaoTest extends Specification {
         createdTask.lastModifiedAt != null
         createdTask.lastModifiedBy != null
 
+        when: "updateTask with toBuilder"
+        def createdAt = createdTask.createdAt
+        def createdBy = createdTask.createdBy
+        def updatedTask = taskDao.save(createdTask.toBuilder().archived(true).build())
+
+        then:
+        updatedTask.archived
+        updatedTask.createdAt == createdAt
+        updatedTask.createdBy == createdBy
+
         when: "findAllTasks"
         def pageable = PageRequest.of(0, 20)
         def taskPage = taskDao.findAllByPage(pageable)
