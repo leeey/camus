@@ -51,3 +51,4 @@
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
 - `AWS_KMS_KEY_ID` : batch, spring cloud config 에서 사용하는 AWS KMS key id
 - `AWS_REGION` : AWS region (기본값 `ap-northeast-2`)
+- `TASK_DB_URL`, `TASK_DB_USERNAME`, `TASK_DB_PASSWORD` : hexagonal(task) PostgreSQL 접속 정보 (기본값 `jdbc:postgresql://localhost:15432/camus`, `camus`/`camus`, 로컬은 `docker compose -f hexagonal/docker-compose.yml up -d`)

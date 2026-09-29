@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import project.camus.database.jpa.model.task.TaskDao;
 import project.camus.database.jpa.model.task.TaskEntity;
+import project.camus.hexagonal.domain.task.exception.TaskNotFoundException;
 
 @Slf4j
 @Component
@@ -33,7 +34,7 @@ public class TaskAdapter {
     public TaskEntity findTaskById(Long id) {
 
         return taskDao.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("id"));
+            .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     public TaskEntity updateTask(TaskEntity entity) {

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.camus.database.jpa.model.task.TaskEntity;
 import project.camus.hexagonal.domain.task.mapper.TaskServiceMapper;
 import project.camus.hexagonal.infra.task.adapter.TaskAdapter;
@@ -12,6 +13,7 @@ import project.camus.hexagonal.port.task.dto.response.FindAllTasksResponsePortDt
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TaskService {
 
@@ -24,6 +26,7 @@ public class TaskService {
         return MAPPER.toPortDto(taskAdapter.createTask(entity));
     }
 
+    @Transactional(readOnly = true)
     public FindAllTasksResponsePortDto findAllTasks(Pageable pageable) {
 
         return MAPPER.toPortDto(taskAdapter.findAllTasks(pageable));

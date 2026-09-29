@@ -5,6 +5,16 @@ server:
 spring:
   application:
     name: hexagonal
+  datasource:
+    url: ${TASK_DB_URL:jdbc:postgresql://localhost:15432/camus}
+    username: ${TASK_DB_USERNAME:camus}
+    password: ${TASK_DB_PASSWORD:camus}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  flyway:
+    locations: classpath:db/migration
 springdoc:
   api-docs:
     path: /api-docs
