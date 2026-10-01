@@ -1,0 +1,16 @@
+plugins {
+    id 'project.camus.java-conventions'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+}
+
+dependencies {
+    api 'org.apache.avro:avro:1.12.1'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

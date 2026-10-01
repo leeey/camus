@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.camus.database.jpa.model.task.TaskEntity;
+import project.camus.hexagonal.domain.task.event.TaskDomainEvent;
+import project.camus.hexagonal.domain.task.event.TaskEventPort;
 import project.camus.hexagonal.domain.task.mapper.TaskServiceMapper;
 import project.camus.hexagonal.infra.task.adapter.TaskAdapter;
 import project.camus.hexagonal.port.task.dto.TaskPortDto;
@@ -21,9 +23,13 @@ public class TaskService {
 
     private final TaskAdapter taskAdapter;
 
+    private final TaskEventPort taskEventPort;
+
     public TaskPortDto createTask(TaskEntity entity) {
 
-        return MAPPER.toPortDto(taskAdapter.createTask(entity));
+        TaskEntity created = taskAdapter.createTask(entity);
+        taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.CREATED, created));
+        return MAPPER.toPortDto(created);
     }
 
     @Transactional(readOnly = true)
@@ -36,12 +42,15 @@ public class TaskService {
 
         TaskEntity entity = findTaskById(id);
         taskAdapter.delete(entity);
+        taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.DELETED, entity));
     }
 
     public TaskPortDto archiveTaskById(Long id) {
 
         TaskEntity entity = findTaskById(id);
-        return MAPPER.toPortDto(taskAdapter.updateTask(entity.toBuilder().archived(true).build()));
+        TaskEntity archived = taskAdapter.updateTask(entity.toBuilder().archived(true).build());
+        taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.ARCHIVED, archived));
+        return MAPPER.toPortDto(archived);
     }
 
     private TaskEntity findTaskById(Long id) {

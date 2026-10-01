@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "TaskEvent",
+  "namespace": "project.camus.event.task",
+  "doc": "task 도메인 이벤트 (task-events topic, key = taskId)",
+  "fields": [
+    { "name": "eventId", "type": { "type": "string", "avro.java.string": "String" }, "doc": "consumer 멱등 처리 키" },
+    {
+      "name": "eventType",
+      "type": { "type": "enum", "name": "TaskEventType", "symbols": [ "CREATED", "ARCHIVED", "DELETED" ] }
+    },
+    { "name": "taskId", "type": "long" },
+    { "name": "title", "type": [ "null", { "type": "string", "avro.java.string": "String" } ], "default": null },
+    { "name": "content", "type": [ "null", { "type": "string", "avro.java.string": "String" } ], "default": null },
+    { "name": "priority", "type": [ "null", "int" ], "default": null },
+    { "name": "archived", "type": "boolean", "default": false },
+    { "name": "occurredAt", "type": { "type": "long", "logicalType": "timestamp-millis" } }
+  ]
+}

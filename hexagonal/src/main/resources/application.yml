@@ -15,6 +15,30 @@ spring:
       ddl-auto: none
   flyway:
     locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
+camus:
+  outbox:
+    relay:
+      enabled: true
+      fixed-delay: 1s
+      batch-size: 100
+      send-timeout: 10s
+  kafka:
+    topics:
+      task-events:
+        name: task-events
+        partitions: 3
+        replicas: 3
+        min-insync-replicas: 2
 springdoc:
   api-docs:
     path: /api-docs

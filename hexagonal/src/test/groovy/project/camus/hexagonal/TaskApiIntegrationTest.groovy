@@ -2,36 +2,11 @@ package project.camus.hexagonal
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.web.client.RestClient
-import org.testcontainers.DockerClientFactory
-import org.testcontainers.postgresql.PostgreSQLContainer
-import spock.lang.Requires
-import spock.lang.Specification
 
-@Requires({ DockerClientFactory.instance().isDockerAvailable() })
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TaskApiIntegrationTest extends Specification {
-
-    static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:18-alpine")
-
-    static {
-        if (DockerClientFactory.instance().isDockerAvailable()) {
-            postgres.start()
-        }
-    }
-
-    @DynamicPropertySource
-    static void datasourceProperties(DynamicPropertyRegistry registry) {
-
-        registry.add("spring.datasource.url", { postgres.jdbcUrl })
-        registry.add("spring.datasource.username", { postgres.username })
-        registry.add("spring.datasource.password", { postgres.password })
-    }
+class TaskApiIntegrationTest extends IntegrationTestSupport {
 
     @Value('${local.server.port}')
     int port

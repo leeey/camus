@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable
 import project.camus.database.jpa.model.task.TaskDao
 import project.camus.database.jpa.model.task.TaskEntity
 import project.camus.hexagonal.domain.task.TaskService
+import project.camus.hexagonal.domain.task.event.TaskEventPort
 import project.camus.hexagonal.infra.task.adapter.TaskAdapter
 import project.camus.hexagonal.port.task.TaskPort
 import project.camus.hexagonal.usecase.task.TaskUseCase
@@ -17,7 +18,8 @@ class TaskDelegatorTest extends Specification {
     def taskDao = Mock(TaskDao)
 
     def taskAdapter = Spy(TaskAdapter, constructorArgs: [taskDao]) as TaskAdapter
-    def taskService = Spy(TaskService, constructorArgs: [taskAdapter]) as TaskService
+    def taskEventPort = Mock(TaskEventPort)
+    def taskService = Spy(TaskService, constructorArgs: [taskAdapter, taskEventPort]) as TaskService
     def taskPort = Spy(TaskPort, constructorArgs: [taskService]) as TaskPort
     def useCase = Spy(TaskUseCase, constructorArgs: [taskPort]) as TaskUseCase
 
