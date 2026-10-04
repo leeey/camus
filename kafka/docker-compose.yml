@@ -1,7 +1,6 @@
-version: "3"
 services:
   broker-1:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.6
     container_name: broker-1
     hostname: broker-1
     ports:
@@ -23,7 +22,7 @@ services:
     networks:
       - camus-kafka
   broker-2:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.6
     container_name: broker-2
     hostname: broker-2
     ports:
@@ -45,7 +44,7 @@ services:
     networks:
       - camus-kafka
   broker-3:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.6
     container_name: broker-3
     hostname: broker-3
     ports:
@@ -67,7 +66,7 @@ services:
     networks:
       - camus-kafka
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
+    image: confluentinc/cp-schema-registry:8.1.6
     container_name: schema-registry
     hostname: schema-registry
     ports:
@@ -86,7 +85,7 @@ services:
     networks:
       - camus-kafka
   rest-proxy:
-    image: confluentinc/cp-kafka-rest
+    image: confluentinc/cp-kafka-rest:8.1.6
     container_name: rest-proxy
     hostname: rest-proxy
     ports:
@@ -106,5 +105,3 @@ services:
 networks:
   camus-kafka:
     driver: bridge
-volumes:
-  camus:

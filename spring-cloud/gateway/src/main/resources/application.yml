@@ -31,6 +31,11 @@ spring:
                   - Access-Control-Allow-Credentials
                   - Trace-Id
           routes:
+            # task 서비스 (hexagonal): /task-service/v1/tasks/** -> /v1/tasks/**
+            - id: task-service
+              uri: lb://HEXAGONAL
+              predicates:
+                - Path=/task-service/**
             - id: example-api
               uri: lb://EXAMPLE-API
               predicates:

@@ -62,5 +62,6 @@ abstract class IntegrationTestSupport extends Specification {
         registry.add("camus.kafka.topics.task-events.replicas", { 1 })
         registry.add("camus.kafka.topics.task-events.min-insync-replicas", { 1 })
         registry.add("camus.outbox.relay.fixed-delay", { "200ms" })
+        registry.add("eureka.client.enabled", { false })
     }
 }

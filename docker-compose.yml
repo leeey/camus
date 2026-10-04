@@ -1,3 +1,9 @@
+# 참조 흐름(gateway → task 서비스 → outbox → kafka → consumer) 로컬 인프라
+# - postgresql: camus(task 서비스), camus_task_view(consumer)
+# - kafka: broker 3 + schema registry + rest proxy
+include:
+  - kafka/docker-compose.yml
+
 services:
   postgres:
     image: postgres:18-alpine
@@ -15,6 +21,7 @@ services:
       retries: 10
     volumes:
       - camus-postgres:/var/lib/postgresql
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
 
 volumes:
   camus-postgres:
