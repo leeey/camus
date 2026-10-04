@@ -8,11 +8,17 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':common:common-webflux')
+    implementation project(':kafka:kafka-event')
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
     implementation 'io.confluent:kafka-avro-serializer:8.1.6'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql'
 
     testImplementation 'org.testcontainers:testcontainers'
     testImplementation 'org.testcontainers:testcontainers-kafka'
+    testImplementation 'org.testcontainers:testcontainers-postgresql'
 }
 
 schemaRegistry {

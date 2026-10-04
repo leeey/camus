@@ -3,6 +3,27 @@ server:
 spring:
   application:
     name: camus-kafka-consumer
+  datasource:
+    url: ${TASK_VIEW_DB_URL:jdbc:postgresql://localhost:15432/camus_task_view}
+    username: ${TASK_VIEW_DB_USERNAME:camus}
+    password: ${TASK_VIEW_DB_PASSWORD:camus}
+  flyway:
+    locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
 kafka:
-  bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
-  schema-registry-url: http://localhost:8081
+  bootstrap-servers: ${spring.kafka.bootstrap-servers}
+  schema-registry-url: ${spring.kafka.properties.schema.registry.url}
+camus:
+  kafka:
+    task-events:
+      topic: task-events
+      group-id: camus-task-view
+      dlt-partitions: 3
+      dlt-replicas: 3
+      retry:
+        max-retries: 3
+        initial-interval: 1s
+        multiplier: 2.0

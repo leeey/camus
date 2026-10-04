@@ -10,60 +10,12 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean
-import org.testcontainers.DockerClientFactory
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.Network
-import org.testcontainers.containers.wait.strategy.Wait
-import org.testcontainers.kafka.ConfluentKafkaContainer
 import project.camus.kafka.avro.Task
 import project.camus.kafka.consumer.listener.dto.TaskDto
 import project.camus.kafka.consumer.usecase.TaskUseCase
-import spock.lang.Requires
-import spock.lang.Specification
 
-@Requires({ DockerClientFactory.instance().isDockerAvailable() })
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class TaskTopicListenerIntegrationTest extends Specification {
-
-    static final String CONFLUENT_VERSION = "8.1.6"
-
-    static Network network = Network.newNetwork()
-
-    static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer("confluentinc/cp-kafka:$CONFLUENT_VERSION")
-        .withNetwork(network)
-        .withListener("kafka:19092")
-
-    static GenericContainer schemaRegistry = new GenericContainer("confluentinc/cp-schema-registry:$CONFLUENT_VERSION")
-        .withNetwork(network)
-        .withExposedPorts(8081)
-        .withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry")
-        .withEnv("SCHEMA_REGISTRY_LISTENERS", "http://0.0.0.0:8081")
-        .withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", "PLAINTEXT://kafka:19092")
-        .waitingFor(Wait.forHttp("/subjects").forStatusCode(200))
-
-    static {
-        if (DockerClientFactory.instance().isDockerAvailable()) {
-            kafka.start()
-            schemaRegistry.dependsOn(kafka).start()
-        }
-    }
-
-    static String schemaRegistryUrl() {
-
-        "http://${schemaRegistry.host}:${schemaRegistry.getMappedPort(8081)}"
-    }
-
-    @DynamicPropertySource
-    static void kafkaProperties(DynamicPropertyRegistry registry) {
-
-        registry.add("kafka.bootstrap-servers", { kafka.bootstrapServers })
-        registry.add("kafka.schema-registry-url", { schemaRegistryUrl() })
-        registry.add("spring.kafka.bootstrap-servers", { kafka.bootstrapServers })
-    }
+class TaskTopicListenerIntegrationTest extends IntegrationTestSupport {
 
     @MockitoSpyBean
     TaskUseCase taskUseCase
