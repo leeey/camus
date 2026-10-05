@@ -22,10 +22,11 @@ public class FeignConfig {
                 .getAttribute(CamusConstants.TRACE_ID, RequestAttributes.SCOPE_REQUEST)).toString());
     }
 
+    // 재시도는 resilience4j retry 가 담당한다. feign 자체 재시도와 겹치면 재시도 횟수가 곱해진다.
     @Bean
     Retryer retryer() {
 
-        return new Retryer.Default();
+        return Retryer.NEVER_RETRY;
     }
 
     @Bean

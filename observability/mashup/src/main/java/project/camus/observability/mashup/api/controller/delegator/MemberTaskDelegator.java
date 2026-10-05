@@ -2,6 +2,7 @@ package project.camus.observability.mashup.api.controller.delegator;
 
 import io.micrometer.observation.annotation.Observed;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import project.camus.observability.mashup.api.controller.response.MemberTaskResponse;
@@ -22,11 +23,12 @@ public class MemberTaskDelegator {
     public MemberTaskResponse findTasksByMemberId(Long memberId) {
 
         MemberDto member = memberService.findMemberByMemberId(memberId);
-        List<TaskDto> tasks = taskService.findTasksByMemberId(memberId);
+        Optional<List<TaskDto>> tasks = taskService.findTasksByMemberId(memberId);
 
         return MemberTaskResponse.builder()
             .member(member)
-            .tasks(tasks)
+            .tasks(tasks.orElse(List.of()))
+            .degraded(tasks.isEmpty())
             .build();
     }
 }

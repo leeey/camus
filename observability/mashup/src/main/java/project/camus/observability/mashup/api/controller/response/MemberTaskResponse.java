@@ -17,4 +17,9 @@ public class MemberTaskResponse {
     MemberDto member;
 
     List<TaskDto> tasks;
+
+    /**
+     * 일부 하위 서비스 장애로 tasks 가 비어 있는 부분 응답인지 여부
+     */
+    boolean degraded;
 }

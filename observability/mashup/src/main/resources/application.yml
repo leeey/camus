@@ -7,6 +7,54 @@ spring:
     openfeign:
       micrometer:
         enabled: true
+      client:
+        config:
+          default:
+            connect-timeout: 1000
+            read-timeout: 2000
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        slow-call-duration-threshold: 1500ms
+        slow-call-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+        # 4xx(요청 오류)는 하위 서비스 장애가 아니므로 실패로 세지 않는다.
+        record-exceptions:
+          - feign.RetryableException
+          - project.camus.observability.mashup.domain.client.config.DownstreamUnavailableException
+    instances:
+      member:
+        base-config: default
+      task:
+        base-config: default
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 100ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        enable-randomized-wait: true
+        randomized-wait-factor: 0.5
+        retry-exceptions:
+          - feign.RetryableException
+          - project.camus.observability.mashup.domain.client.config.DownstreamUnavailableException
+        # circuit breaker 가 열려 있으면 재시도하지 않는다.
+        ignore-exceptions:
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
+    instances:
+      member:
+        base-config: default
+      task:
+        base-config: default
 feign-url:
   member: http://camus-observability-member:9001/camus/v1/members
   task: http://camus-observability-task:9002/camus/v1/tasks
@@ -19,7 +67,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: health, prometheus, circuitbreakers, retries
+  health:
+    circuitbreakers:
+      enabled: true
   metrics:
     distribution:
       percentiles-histogram:
