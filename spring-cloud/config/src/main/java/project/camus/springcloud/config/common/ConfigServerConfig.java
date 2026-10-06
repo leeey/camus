@@ -2,6 +2,7 @@ package project.camus.springcloud.config.common;
 
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.config.server.environment.JGitEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.JGitEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.MultipleJGitEnvironmentProperties;
@@ -10,7 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import project.camus.aws.client.AwsKmsClient;
 
+// 테스트처럼 git 저장소 없이 띄울 때는 camus.config.git.enabled=false
 @Configuration
+@ConditionalOnProperty(name = "camus.config.git.enabled", havingValue = "true", matchIfMissing = true)
 public class ConfigServerConfig {
 
     private final ConfigurableEnvironment configurableEnvironment;

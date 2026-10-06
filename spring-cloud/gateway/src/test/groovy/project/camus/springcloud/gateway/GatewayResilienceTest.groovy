@@ -31,6 +31,8 @@ import spock.lang.Specification
     "spring.cloud.config.enabled=false",
     "spring.cloud.bus.enabled=false",
     "eureka.client.enabled=false",
+    // 테스트에는 rabbitmq(cloud bus) 가 없다.
+    "management.health.rabbit.enabled=false",
 ])
 class GatewayResilienceTest extends Specification {
 
@@ -282,6 +284,40 @@ class GatewayResilienceTest extends Specification {
 
         then: "모두 401 이고 429 는 없다"
         statuses.every { it == 401 }
+    }
+
+    def "downstream actuator is not reachable through the gateway even with a valid token"() {
+
+        given:
+        taskService.stubFor(any(urlPathEqualTo("/actuator/env")).willReturn(aResponse().withStatus(200)))
+
+        when:
+        def response = client.get().uri("/actuator/env").retrieve().toEntity(Map)
+
+        then:
+        response.statusCode.value() == 403
+        taskService.countRequestsMatching(anyRequestedFor(urlPathEqualTo("/actuator/env")).build()).count == 0
+    }
+
+    def "gateway exposes only health and prometheus"() {
+
+        given:
+        def gateway = RestClient.builder()
+            .requestFactory(new JdkClientHttpRequestFactory())
+            .baseUrl("http://localhost:$port")
+            .defaultStatusHandler({ true }, { request, response -> })
+            .build()
+
+        expect:
+        gateway.get().uri(path).retrieve().toBodilessEntity().statusCode.value() == status
+
+        where:
+        path                    | status
+        "/actuator/health"      | 200
+        "/actuator/prometheus"  | 200
+        "/actuator/beans"       | 404
+        "/actuator/env"         | 404
+        "/actuator/busrefresh"  | 404
     }
 
     private ResponseEntity<Map> request(HttpMethod method) {

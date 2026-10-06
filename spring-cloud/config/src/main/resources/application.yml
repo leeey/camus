@@ -40,6 +40,13 @@ key-store:
 
 
 camus:
+  config:
+    security:
+      # 로컬 기본값. 운영에서는 반드시 환경변수(Secret)로 바꿔 주세요.
+      client-username: ${CONFIG_SERVER_USERNAME:config-client}
+      client-password: ${CONFIG_SERVER_PASSWORD:config-client-secret}
+      admin-username: ${CONFIG_SERVER_ADMIN_USERNAME:config-admin}
+      admin-password: ${CONFIG_SERVER_ADMIN_PASSWORD:config-admin-secret}
   aws:
     region: ${AWS_REGION:ap-northeast-2}
     kms:

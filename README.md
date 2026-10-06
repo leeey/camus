@@ -111,6 +111,12 @@ OAuth2 / OIDC 인증 서버 (포트 9400). access token 은 RS256 JWT 이고, re
 curl -u camus-service:camus-service-secret -d grant_type=client_credentials -d scope=task.read localhost:9400/oauth2/token
 ```
 
+#### 운영 엔드포인트 보호
+
+- gateway 는 하위 서비스의 actuator 를 열지 않는다 (`/{route}/actuator/**` 는 403). gateway 자신은 `health`, `prometheus` 만 노출한다.
+- config server 는 기본 인증을 쓴다. client 계정(`CONFIG_SERVER_USERNAME/PASSWORD`)은 설정 조회만, admin 계정(`CONFIG_SERVER_ADMIN_USERNAME/PASSWORD`)은 `/encrypt`, `/decrypt`, `busrefresh` 까지 쓸 수 있다.
+- 운영에서는 `MANAGEMENT_SERVER_PORT` 로 actuator 를 별도 포트로 분리하고, 그 포트는 외부(ingress)에 열지 않는다. prometheus 는 내부망에서 관리 포트로 수집한다.
+
 #### resilience (장애 대응)
 
 | 위치 | timeout | retry | circuit breaker | 그 밖에 |
@@ -168,6 +174,10 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 - `AUTH_SERVICE_CLIENT_SECRET`, `AUTH_WEB_CLIENT_SECRET` : 클라이언트 secret (`{bcrypt}...`, 로컬 기본값은 `camus-service-secret`, `camus-web-secret`)
 - `AUTH_WEB_REDIRECT_URIS` : camus-web redirect uri
 - `AUTH_DB_URL`, `AUTH_DB_USERNAME`, `AUTH_DB_PASSWORD` : auth-server PostgreSQL (기본값 `jdbc:postgresql://localhost:15432/camus_auth`, `camus`/`camus`)
+- `CONFIG_SERVER_URI` : config client(gateway, example-api) 가 접속할 config server (기본값 `http://127.0.0.1:8888`)
+- `CONFIG_SERVER_USERNAME`, `CONFIG_SERVER_PASSWORD` : config server client 계정 (로컬 기본값 `config-client`/`config-client-secret`)
+- `CONFIG_SERVER_ADMIN_USERNAME`, `CONFIG_SERVER_ADMIN_PASSWORD` : config server admin 계정 (로컬 기본값 `config-admin`/`config-admin-secret`)
+- `MANAGEMENT_SERVER_PORT` : actuator 를 별도 포트로 분리할 때 사용
 - `TASK_SERVICE_URI` : gateway 의 task 서비스 주소 (기본값 `lb://HEXAGONAL`, kubernetes 는 `http://hexagonal:8084` 처럼 service 주소)
 - `REDIS_HOST`, `REDIS_PORT` : gateway rate limit 용 redis (기본값 `localhost`, `6379`)
 - `GATEWAY_RATE_LIMIT_REPLENISH_RATE`, `GATEWAY_RATE_LIMIT_BURST_CAPACITY` : 클라이언트별 초당 보충 토큰 수와 최대 버스트 (기본값 `10`, `20`)

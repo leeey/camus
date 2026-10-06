@@ -77,15 +77,6 @@ spring:
                 - Path=/example-api/**
               filters:
                 - *rate-limiter
-            - id: example-api
-              uri: lb://EXAMPLE-API
-              predicates:
-                - Path=/example-api/actuator/**
-                - Method=GET,POST
-              filters:
-                - *rate-limiter
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/example-api/(?<path>.*), /$\{path}
   security:
     oauth2:
       resourceserver:
@@ -151,4 +142,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httpexchanges, busrefresh, prometheus
+        include: health, prometheus

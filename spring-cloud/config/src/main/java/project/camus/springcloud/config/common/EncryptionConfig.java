@@ -1,6 +1,7 @@
 package project.camus.springcloud.config.common;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.bootstrap.encrypt.KeyProperties.KeyStore;
 import org.springframework.cloud.config.server.encryption.EncryptionController;
 import org.springframework.cloud.config.server.encryption.KeyStoreTextEncryptorLocator;
@@ -12,7 +13,9 @@ import org.springframework.security.crypto.encrypt.KeyStoreKeyFactory;
 import org.springframework.security.crypto.encrypt.RsaAlgorithm;
 import project.camus.aws.client.AwsKmsClient;
 
+// 테스트처럼 keystore 없이 띄울 때는 camus.config.encryption.enabled=false
 @Configuration
+@ConditionalOnProperty(name = "camus.config.encryption.enabled", havingValue = "true", matchIfMissing = true)
 public class EncryptionConfig {
 
     private final Resource keyStoreLocation;

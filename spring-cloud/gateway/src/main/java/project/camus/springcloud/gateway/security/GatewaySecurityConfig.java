@@ -15,6 +15,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
  * <ul>
  *     <li>task-service: 조회는 task.read, 변경은 task.write scope 가 필요하다. 토큰이 없거나 잘못되면 401, scope 가 부족하면 403.</li>
  *     <li>검증한 토큰(Authorization 헤더)은 그대로 하위 서비스로 전달한다.</li>
+ *     <li>하위 서비스의 actuator 는 gateway 를 통해 열지 않는다 (/{route}/actuator/** 차단).</li>
  * </ul>
  */
 @Configuration
@@ -32,6 +33,7 @@ public class GatewaySecurityConfig {
             .httpBasic(HttpBasicSpec::disable)
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                .pathMatchers("/*/actuator", "/*/actuator/**").denyAll()
                 .pathMatchers(HttpMethod.GET, TASK_SERVICE).hasAuthority("SCOPE_task.read")
                 .pathMatchers(TASK_SERVICE).hasAuthority("SCOPE_task.write")
                 .anyExchange().permitAll())
