@@ -1,17 +1,30 @@
-version: '3'
+# observability 예제 (mashup → member, task)
+# jar 를 먼저 만들고 실행한다: ./gradlew :observability:observability-mashup:bootJar :observability:observability-member:bootJar :observability:observability-task:bootJar
 services:
   mashup:
-    build: ./mashup
+    build:
+      context: ..
+      dockerfile: docker/app.Dockerfile
+      args:
+        JAR_FILE: observability/mashup/build/libs/observability-mashup.jar
     container_name: camus-observability-mashup
     ports:
       - '9000:9000'
   member:
-    build: ./member
+    build:
+      context: ..
+      dockerfile: docker/app.Dockerfile
+      args:
+        JAR_FILE: observability/member/build/libs/observability-member.jar
     container_name: camus-observability-member
     ports:
       - '9001:9001'
   task:
-    build: ./task
+    build:
+      context: ..
+      dockerfile: docker/app.Dockerfile
+      args:
+        JAR_FILE: observability/task/build/libs/observability-task.jar
     container_name: camus-observability-task
     ports:
       - '9002:9002'

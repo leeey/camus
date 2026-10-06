@@ -160,6 +160,22 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 - prometheus 알림 규칙 (`docker/observability/prometheus/alert-rules.yml`) : InstanceDown, HighErrorRate, CircuitBreakerOpen, OutboxBacklog, DeadLetterEvents, ConsumerLag
   - 알림 전송(alertmanager, slack 등)은 환경에 맞게 붙인다.
 
+#### 컨테이너 이미지
+
+모든 애플리케이션은 `docker/app.Dockerfile` 하나로 이미지를 만든다.
+
+- spring boot layered jar 를 풀어 의존성/애플리케이션 layer 를 나눈다 (코드만 바뀌면 application layer 만 다시 받는다).
+- `eclipse-temurin:21-jre-alpine` (amd64, arm64), non-root(uid 10001) 로 실행한다.
+- `-XX:MaxRAMPercentage=75` 로 컨테이너 메모리 한도에 맞춰 힙을 잡고, OOM 이면 바로 종료해 재시작되게 한다.
+
+```shell
+# kubernetes 로 배포하는 앱 (auth-server, gateway, task-service, task-consumer)
+./docker/build-images.sh [tag]
+
+# 그 밖의 앱
+docker build -f docker/app.Dockerfile --build-arg JAR_FILE=<module>/build/libs/<app>.jar -t <image> .
+```
+
 #### required environment variables
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
 - `AWS_KMS_KEY_ID` : batch, spring cloud config 에서 사용하는 AWS KMS key id
