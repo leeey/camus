@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: task-service
 spec:
-  replicas: 2
+  # replicas 는 HPA(minReplicas) 가 정한다. 여기에 두면 kubectl apply 할 때마다 HPA 가 정한 값을 되돌린다.
   revisionHistoryLimit: 3
   selector:
     matchLabels:

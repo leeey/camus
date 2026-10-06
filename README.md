@@ -193,6 +193,24 @@ k8s/
 - 보안: non-root(uid 10001), readOnlyRootFilesystem(/tmp 는 emptyDir), capabilities drop ALL, seccomp RuntimeDefault, `enableServiceLinks: false`.
 - 자원: memory request 512Mi / limit 768Mi (힙은 한도의 75%), cpu limit 은 두지 않는다.
 - auth-server 의 issuer(`AUTH_ISSUER_URI`)는 클라이언트가 보는 외부 주소여야 하고, gateway 는 같은 값으로 iss 를 검증한다. 공개키(JWKS)는 클러스터 내부 주소로 가져온다.
+- ConfigMap 은 `configMapGenerator` 로 만든다. 내용이 바뀌면 이름의 hash 가 바뀌어 Deployment 가 다시 배포된다 (`envFrom` 으로 붙인 일반 ConfigMap 은 바뀌어도 pod 가 재시작되지 않는다).
+- gateway, task-service 의 replicas 는 HPA 가 정한다. Deployment 에 replicas 를 두면 `kubectl apply` 할 때마다 HPA 가 정한 값을 되돌린다.
+- HPA 는 JVM 기동 직후 CPU 에 반응해 과하게 늘리지 않도록 확장 60초 관찰 + 1분에 1개, 축소 5분 관찰로 둔다.
+
+로컬 kubernetes (colima k3s)
+
+```shell
+colima start --kubernetes --cpu 4 --memory 8          # docker 런타임이라 빌드한 이미지를 바로 쓴다
+helm install traefik traefik/traefik --version 41.6.1 -n traefik --create-namespace   # ingress controller
+
+./docker/build-images.sh local
+kubectl apply -k k8s/overlays/local
+kubectl port-forward -n traefik svc/traefik 18080:80   # auth.localtest.me / api.localtest.me → 127.0.0.1
+./k8s/smoke-test.sh                                    # 토큰 → gateway → task-service → kafka → consumer 확인
+```
+
+- `*.localtest.me` 는 127.0.0.1 로 풀린다. issuer 가 `http://auth.localtest.me:18080` 이라 포트를 바꾸면 `k8s/base/*/*.env` 의 주소도 바꾼다.
+- 롤링 배포 확인: 요청을 계속 보내면서 `kubectl rollout restart -n camus deploy/gateway deploy/task-service` 를 해도 실패 응답이 없어야 한다 (preStop + readiness + graceful shutdown + maxUnavailable 0).
 
 #### required environment variables
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)

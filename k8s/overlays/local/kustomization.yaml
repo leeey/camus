@@ -33,10 +33,10 @@ secretGenerator:
       - AUTH_WEB_CLIENT_SECRET={bcrypt}$2y$10$PKo8dhBYbgDB0ObSMwsU2umyG2XkGsHp0vfIaAMAgi22YoYY0wDMS
 
 patches:
-  # 로컬은 1 개씩
+  # 로컬은 1 개씩 (gateway, task-service 는 HPA minReplicas 로 정한다)
   - target:
       kind: Deployment
-      labelSelector: app.kubernetes.io/part-of=camus
+      name: auth-server|task-consumer
     patch: |-
       - op: replace
         path: /spec/replicas

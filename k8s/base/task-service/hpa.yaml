@@ -9,6 +9,16 @@ spec:
     name: task-service
   minReplicas: 2
   maxReplicas: 6
+  # JVM 기동 직후의 CPU 사용량에 반응해 과하게 늘리지 않도록 확장은 천천히, 축소는 더 천천히 한다.
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
   metrics:
     - type: Resource
       resource:
