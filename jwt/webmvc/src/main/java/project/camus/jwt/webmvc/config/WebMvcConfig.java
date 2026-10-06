@@ -3,9 +3,7 @@ package project.camus.jwt.webmvc.config;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,37 +12,26 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import project.camus.common.FailureResponse;
 import project.camus.common.util.ObjectMapperUtil;
-import project.camus.jwt.webmvc.config.security.JwtFilter;
+import project.camus.jwt.webmvc.config.security.JwtAuthorities;
 
 @EnableWebSecurity
 @Configuration
-@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
-
-    private final JwtFilter jwtFilter;
-
-    private final AuthenticationProvider authenticationProvider;
 
     @Order(2)
     @Bean
     public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
-
-        CharacterEncodingFilter filter = new CharacterEncodingFilter();
-        filter.setEncoding(StandardCharsets.UTF_8.name());
-        filter.setForceEncoding(true);
 
         return http
             .cors(AbstractHttpConfigurer::disable)
@@ -56,19 +43,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/users/jwt").permitAll()
+                .requestMatchers("/actuator/health/**").permitAll()
                 .anyRequest()
                 .authenticated())
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(configurer -> configurer
-                .accessDeniedHandler((request, response, exception) ->
-                    toResponse(response, HttpStatus.FORBIDDEN.value(), exception.getMessage()))
+            // auth-server 가 발급한 JWT 를 검증하는 resource server. 토큰이 없거나 잘못되면 401, 권한이 없으면 403.
+            .oauth2ResourceServer(resourceServer -> resourceServer
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(JwtAuthorities.converter()))
                 .authenticationEntryPoint((request, response, exception) ->
-                    toResponse(response, HttpStatus.UNAUTHORIZED.value(), exception.getMessage()))
-            )
+                    toResponse(response, HttpStatus.UNAUTHORIZED.value(), "unauthorized"))
+                .accessDeniedHandler((request, response, exception) ->
+                    toResponse(response, HttpStatus.FORBIDDEN.value(), "forbidden")))
             .requestCache(RequestCacheConfigurer::disable)
-            .sessionManagement(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .build();
     }
 
@@ -90,6 +76,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.OPTIONS.name())
-            .allowedHeaders(HttpHeaders.AUTHORIZATION);
+            .allowedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE);
     }
 }

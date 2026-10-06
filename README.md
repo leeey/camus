@@ -42,9 +42,8 @@
 
 #### batch
 
-#### jwt
-- webmvc
-- webflux
+#### jwt (resource server 예제)
+- webmvc, webflux : auth-server 가 발급한 JWT 를 JWKS 로 검증 (`GET /users/me`)
 
 #### reference flow (gateway → task 서비스 → outbox → kafka → consumer)
 
@@ -72,13 +71,16 @@ client ─▶ gateway ─▶ task 서비스(hexagonal) ─┬─ task         �
 docker compose up -d
 
 # 2. 애플리케이션 (각각 별도 터미널)
+./gradlew :auth-server:bootRun                                    # auth-server 9400
 ./gradlew :spring-cloud:spring-cloud-service-discovery:bootRun   # eureka 8761
 ./gradlew :hexagonal:bootRun                                      # task 서비스 8084
 ./gradlew :kafka:kafka-consumer:bootRun                           # consumer 9091
 ./gradlew :spring-cloud:spring-cloud-gateway:bootRun              # gateway 8000
 
-# 3. gateway 로 호출
-curl -X POST localhost:8000/task-service/v1/tasks -H 'Content-Type: application/json' \
+# 3. 토큰을 받아 gateway 로 호출 (task.read: 조회, task.write: 변경)
+TOKEN=$(curl -s -u camus-service:camus-service-secret -d grant_type=client_credentials \
+  -d 'scope=task.read task.write' localhost:9400/oauth2/token | jq -r .access_token)
+curl -X POST localhost:8000/task-service/v1/tasks -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
   -d '{"title":"hello","content":"world","priorityType":"HIGH"}'
 
 # 4. consumer 조회 테이블 확인
@@ -93,6 +95,9 @@ OAuth2 / OIDC 인증 서버 (포트 9400). access token 은 RS256 JWT 이고, re
 |---|---|---|
 | `camus-web` | authorization code + PKCE, refresh token | 사용자 로그인 (secret 을 가진 서버(BFF) 가 토큰을 다룬다) |
 | `camus-service` | client credentials | 서비스 간 호출 |
+
+- gateway 는 `/task-service/**` 의 JWT 를 검증하고(조회 `task.read`, 변경 `task.write`) 토큰을 그대로 하위 서비스로 넘긴다. 토큰이 없거나 잘못되면 401, scope 가 부족하면 403. rate limit 은 인증된 사용자 기준으로 센다.
+- 지금은 gateway 에서만 검증하고 내부망을 신뢰한다. 하위 서비스도 직접 검증하려면 jwt 예제처럼 `spring-boot-starter-oauth2-resource-server` 와 `issuer-uri`/`jwk-set-uri` 를 설정한다.
 
 - 엔드포인트 : `/.well-known/openid-configuration`, `/oauth2/authorize`, `/oauth2/token`, `/oauth2/jwks`, `/oauth2/revoke`, `/oauth2/introspect`, `/userinfo`
 - access token 15분 (서비스 토큰 5분), refresh token 은 한 번 쓰면 새로 발급하고 이미 쓴 토큰은 거절한다.
@@ -150,7 +155,6 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
   - 알림 전송(alertmanager, slack 등)은 환경에 맞게 붙인다.
 
 #### required environment variables
-- `JWT_TOKEN_SECRET` : jwt (webmvc, webflux) token signing secret (256 bit 이상 랜덤 값)
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
 - `AWS_KMS_KEY_ID` : batch, spring cloud config 에서 사용하는 AWS KMS key id
 - `AWS_REGION` : AWS region (기본값 `ap-northeast-2`)
@@ -158,7 +162,8 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 - `TASK_VIEW_DB_URL`, `TASK_VIEW_DB_USERNAME`, `TASK_VIEW_DB_PASSWORD` : kafka consumer 조회용 PostgreSQL 접속 정보 (기본값 `jdbc:postgresql://localhost:15432/camus_task_view`, `camus`/`camus`)
 - `KAFKA_BOOTSTRAP_SERVERS`, `SCHEMA_REGISTRY_URL` : kafka 접속 정보 (기본값 `localhost:9092,localhost:9093,localhost:9094`, `http://localhost:8081`)
 - `EUREKA_ENABLED`, `EUREKA_URL` : hexagonal 의 eureka 등록 여부와 주소 (기본값 `true`, `http://127.0.0.1:8761/eureka`)
-- `AUTH_ISSUER_URI` : auth-server issuer (기본값 `http://localhost:9400`)
+- `AUTH_ISSUER_URI` : auth-server issuer. resource server(gateway, jwt 예제) 는 토큰의 iss 를 이 값과 비교한다 (기본값 `http://localhost:9400`)
+- `AUTH_JWK_SET_URI` : resource server 가 공개키를 가져오는 주소 (기본값 `http://localhost:9400/oauth2/jwks`)
 - `AUTH_SIGNING_PRIVATE_KEY`, `AUTH_SIGNING_KEY_ID` : access token 서명 키 (PKCS#8 PEM) 와 kid
 - `AUTH_SERVICE_CLIENT_SECRET`, `AUTH_WEB_CLIENT_SECRET` : 클라이언트 secret (`{bcrypt}...`, 로컬 기본값은 `camus-service-secret`, `camus-web-secret`)
 - `AUTH_WEB_REDIRECT_URIS` : camus-web redirect uri

@@ -3,6 +3,7 @@ package project.camus.springcloud.gateway
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.any
 import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor
+import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 
@@ -20,6 +21,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.web.client.RestClient
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.GenericContainer
+import project.camus.test.support.TestJwtIssuer
 import spock.lang.Requires
 import spock.lang.Specification
 
@@ -36,6 +38,9 @@ class GatewayResilienceTest extends Specification {
 
     static WireMockServer taskService = new WireMockServer(wireMockConfig().dynamicPort())
 
+    // auth-server 대신 JWKS 를 제공하고 토큰을 서명한다.
+    static TestJwtIssuer issuer = new TestJwtIssuer()
+
     static GenericContainer redis = new GenericContainer("redis:7.4-alpine").withExposedPorts(6379)
 
     static {
@@ -49,6 +54,8 @@ class GatewayResilienceTest extends Specification {
     static void properties(DynamicPropertyRegistry registry) {
 
         registry.add("TASK_SERVICE_URI", { taskService.baseUrl() })
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri", { TestJwtIssuer.ISSUER })
+        registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", { "${taskService.baseUrl()}/oauth2/jwks" })
         registry.add("spring.data.redis.host", { redis.host })
         registry.add("spring.data.redis.port", { redis.getMappedPort(6379) })
         registry.add("GATEWAY_RATE_LIMIT_REPLENISH_RATE", { 1 })
@@ -65,26 +72,31 @@ class GatewayResilienceTest extends Specification {
 
     RestClient client
 
-    // rate limit 버킷이 테스트끼리 섞이지 않도록 테스트마다 다른 클라이언트 IP 를 쓴다.
-    String clientIp
+    // rate limit 버킷(사용자별)이 테스트끼리 섞이지 않도록 테스트마다 다른 사용자 토큰을 쓴다.
+    String user
 
     def setup() {
 
         taskService.resetAll()
+        taskService.stubFor(get(urlPathEqualTo("/oauth2/jwks")).willReturn(aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(issuer.jwksJson())))
         circuitBreakerRegistry.allCircuitBreakers.each { it.reset() }
-        clientIp = "10.0.${new Random().nextInt(255)}.${new Random().nextInt(255)}"
+        user = "user-${UUID.randomUUID()}"
         client = newClient()
     }
 
     // apache httpclient 5 는 503/429 를 기본으로 한 번 재시도해서 gateway 동작을 가리므로, 재시도하지 않는 JDK HttpClient 를 쓴다.
-    private RestClient newClient() {
+    private RestClient newClient(String token = issuer.token(user, ["task.read", "task.write"])) {
 
-        RestClient.builder()
+        def builder = RestClient.builder()
             .requestFactory(new JdkClientHttpRequestFactory())
             .baseUrl("http://localhost:$port/task-service")
-            .defaultHeader("X-Forwarded-For", clientIp)
             .defaultStatusHandler({ true }, { request, response -> })
-            .build()
+        if (token != null) {
+            builder.defaultHeader("Authorization", "Bearer $token")
+        }
+        builder.build()
     }
 
     def cleanupSpec() {
@@ -175,9 +187,9 @@ class GatewayResilienceTest extends Specification {
         then:
         circuitBreaker().state == CircuitBreaker.State.OPEN
 
-        when: "다른 클라이언트로 요청 (앞의 5건으로 rate limit 버킷을 다 썼으므로)"
+        when: "다른 사용자로 요청 (앞의 5건으로 rate limit 버킷을 다 썼으므로)"
         taskService.resetRequests()
-        clientIp = "10.2.0.1"
+        user = "other-${UUID.randomUUID()}"
         def response = newClient().post().uri(TASKS_PATH).retrieve().toEntity(Map)
 
         then:
@@ -197,8 +209,8 @@ class GatewayResilienceTest extends Specification {
         statuses.count { it == 200 } <= 6
         statuses.count { it == 429 } >= 4
 
-        when: "another client is not affected"
-        clientIp = "10.1.0.1"
+        when: "another user is not affected"
+        user = "other-${UUID.randomUUID()}"
         def other = newClient().get().uri(TASKS_PATH).retrieve().toEntity(Map)
 
         then:
@@ -218,6 +230,58 @@ class GatewayResilienceTest extends Specification {
         then: "burst 5 - 2 requests = 3, 재시도가 토큰을 쓰면 최대 2 (초당 1개 보충 고려)"
         next.statusCode.value() == 200
         (next.headers.getFirst("X-RateLimit-Remaining") as int) >= 3
+    }
+
+    def "requests without a valid token are rejected with 401 and not routed"() {
+
+        given:
+        okTasks()
+
+        expect:
+        newClient(token).get().uri(TASKS_PATH).retrieve().toEntity(Map).statusCode.value() == 401
+        taskCalls() == 0
+
+        where:
+        token << [null, "not-a-jwt", new TestJwtIssuer("other-key").token("camus", ["task.read"]),
+                  issuer.expiredToken("camus", ["task.read"])]
+    }
+
+    def "write requires task.write scope"() {
+
+        given:
+        okTasks()
+        def readOnly = newClient(issuer.token(user, ["task.read"]))
+
+        expect:
+        readOnly.get().uri(TASKS_PATH).retrieve().toEntity(Map).statusCode.value() == 200
+        readOnly.post().uri(TASKS_PATH).retrieve().toEntity(Map).statusCode.value() == 403
+        taskCalls() == 1
+    }
+
+    def "the validated token is relayed to the downstream service"() {
+
+        given:
+        okTasks()
+        def token = issuer.token(user, ["task.read"])
+
+        when:
+        newClient(token).get().uri(TASKS_PATH).retrieve().toEntity(Map)
+
+        then:
+        taskService.allServeEvents.find { it.request.url.startsWith(TASKS_PATH) }.request.getHeader("Authorization") ==
+            "Bearer $token"
+    }
+
+    def "unauthenticated requests do not consume the rate limit"() {
+
+        given:
+        okTasks()
+
+        when: "burst 5 를 넘는 인증 실패 요청"
+        def statuses = (1..10).collect { newClient(null).get().uri(TASKS_PATH).retrieve().toEntity(Map).statusCode.value() }
+
+        then: "모두 401 이고 429 는 없다"
+        statuses.every { it == 401 }
     }
 
     private ResponseEntity<Map> request(HttpMethod method) {

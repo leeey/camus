@@ -1,0 +1,19 @@
+// 테스트 전용 지원 코드 (testImplementation 으로만 쓴다)
+plugins {
+    id 'project.camus.java-conventions'
+}
+
+group = 'project.camus'
+
+dependencies {
+    // nimbus-jose-jwt 는 spring security 가 버전을 맞춰 가져온다.
+    api 'org.springframework.security:spring-security-oauth2-jose'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

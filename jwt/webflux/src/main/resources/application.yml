@@ -7,11 +7,15 @@ spring:
     name: camus-jwt-webflux
   devtools:
     add-properties: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # auth-server 가 서명한 토큰만 받는다. 공개키(JWKS)로 서명을, issuer 로 발급자를 검증한다.
+          issuer-uri: ${AUTH_ISSUER_URI:http://localhost:9400}
+          jwk-set-uri: ${AUTH_JWK_SET_URI:http://localhost:9400/oauth2/jwks}
 springdoc:
   api-docs:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
-jwt:
-  token-secret: ${JWT_TOKEN_SECRET}
-  expiration-ms: 3600000

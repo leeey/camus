@@ -1,34 +1,28 @@
 package project.camus.jwt.webflux.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
 import org.springframework.security.config.web.server.ServerHttpSecurity.FormLoginSpec;
 import org.springframework.security.config.web.server.ServerHttpSecurity.HttpBasicSpec;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
-import org.springframework.security.web.server.authorization.HttpStatusServerAccessDeniedHandler;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
-import project.camus.jwt.webflux.config.security.AuthenticationManagerImpl;
-import project.camus.jwt.webflux.config.security.SecurityContextRepositoryImpl;
+import project.camus.jwt.webflux.config.security.JwtAuthorities;
 
+/**
+ * auth-server 가 발급한 JWT 를 검증하는 resource server (webflux).
+ */
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @Configuration
-@RequiredArgsConstructor
 public class WebFluxConfig implements WebFluxConfigurer {
-
-    private final SecurityContextRepositoryImpl securityContextRepository;
-
-    private final AuthenticationManagerImpl authenticationManager;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -37,18 +31,15 @@ public class WebFluxConfig implements WebFluxConfigurer {
             .csrf(CsrfSpec::disable)
             .formLogin(FormLoginSpec::disable)
             .httpBasic(HttpBasicSpec::disable)
-            .securityContextRepository(securityContextRepository)
-            .authenticationManager(authenticationManager)
             .authorizeExchange(spec -> spec
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/favicon.ico").permitAll()
                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll()
-                .pathMatchers(HttpMethod.GET, "/healthcheck").permitAll()
-                .pathMatchers(HttpMethod.POST, "/users/jwt").permitAll()
+                .pathMatchers("/actuator/health/**").permitAll()
                 .anyExchange().authenticated())
-            .exceptionHandling(spec ->
-                spec.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED))
-                    .accessDeniedHandler(new HttpStatusServerAccessDeniedHandler(HttpStatus.FORBIDDEN)))
+            .oauth2ResourceServer(resourceServer -> resourceServer
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(
+                    new ReactiveJwtAuthenticationConverterAdapter(JwtAuthorities.converter()))))
             .build();
     }
 
@@ -58,6 +49,6 @@ public class WebFluxConfig implements WebFluxConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowedMethods("*")
-            .allowedHeaders(HttpHeaders.AUTHORIZATION);
+            .allowedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE);
     }
 }
