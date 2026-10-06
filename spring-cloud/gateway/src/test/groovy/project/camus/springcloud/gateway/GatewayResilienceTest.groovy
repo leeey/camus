@@ -107,6 +107,23 @@ class GatewayResilienceTest extends Specification {
         taskCalls() == 1
     }
 
+    def "trace id from the client is kept in Trace-Id header and propagated downstream"() {
+
+        given:
+        def traceId = "5b8aa5a2d2c872e8321cf37308d69df2"
+        okTasks()
+
+        when:
+        def response = client.get().uri(TASKS_PATH)
+            .header("traceparent", "00-$traceId-051581bf3cb55c13-01")
+            .retrieve().toEntity(Map)
+        def downstreamTraceParent = taskService.allServeEvents.first().request.getHeader("traceparent")
+
+        then:
+        response.headers.getFirst("Trace-Id") == traceId
+        downstreamTraceParent.startsWith("00-$traceId-")
+    }
+
     def "GET is retried on 503 and falls back to 503 json"() {
 
         given:

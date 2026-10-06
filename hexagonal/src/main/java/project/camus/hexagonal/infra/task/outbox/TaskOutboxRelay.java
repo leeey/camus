@@ -1,5 +1,8 @@
 package project.camus.hexagonal.infra.task.outbox;
 
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,10 @@ public class TaskOutboxRelay {
 
     private final KafkaTopicProperties.Topic topic;
 
+    private final Tracer tracer;
+
+    private final Propagator propagator;
+
     @Transactional
     @Scheduled(fixedDelayString = "${camus.outbox.relay.fixed-delay:1s}")
     public void relay() {
@@ -49,7 +56,7 @@ public class TaskOutboxRelay {
         }
 
         List<OutboxEvent> events = jdbcClient.sql("""
-                SELECT id, event_id, aggregate_id, event_type, payload::text AS payload, occurred_at
+                SELECT id, event_id, aggregate_id, event_type, payload::text AS payload, occurred_at, trace_parent
                 FROM outbox_event
                 WHERE published_at IS NULL
                 ORDER BY id
@@ -62,7 +69,8 @@ public class TaskOutboxRelay {
                 rs.getLong("aggregate_id"),
                 rs.getString("event_type"),
                 rs.getString("payload"),
-                rs.getTimestamp("occurred_at").toInstant()))
+                rs.getTimestamp("occurred_at").toInstant(),
+                rs.getString("trace_parent")))
             .list();
 
         for (OutboxEvent event : events) {
@@ -76,22 +84,43 @@ public class TaskOutboxRelay {
         }
     }
 
+    /**
+     * 이벤트를 기록한 요청의 trace 를 부모로 하는 span 안에서 발행한다.
+     * kafka producer observation 이 이 span 을 이어받아 traceparent 헤더를 붙이므로, consumer 까지 하나의 trace 로 이어진다.
+     */
     private boolean publish(OutboxEvent event) {
 
-        try {
+        Span span = startPublishSpan(event);
+        try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
             kafkaTemplate.send(topic.name(), String.valueOf(event.aggregateId()), event.toAvro())
                 .get(properties.sendTimeout().toMillis(), TimeUnit.MILLISECONDS);
             return true;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            span.error(e);
             return false;
         } catch (Exception e) {
             log.warn("failed to publish outbox event. id={}, eventId={}", event.id(), event.eventId(), e);
+            span.error(e);
             return false;
+        } finally {
+            span.end();
         }
     }
 
-    record OutboxEvent(long id, UUID eventId, long aggregateId, String eventType, String payload, Instant occurredAt) {
+    private Span startPublishSpan(OutboxEvent event) {
+
+        Span.Builder builder = event.traceParent() == null
+            ? tracer.spanBuilder()
+            : propagator.extract(Map.of(TaskOutboxAdapter.TRACE_PARENT, event.traceParent()), Map::get);
+        return builder.name("outbox publish")
+            .tag("outbox.event.id", event.eventId().toString())
+            .tag("outbox.event.type", event.eventType())
+            .start();
+    }
+
+    record OutboxEvent(long id, UUID eventId, long aggregateId, String eventType, String payload, Instant occurredAt,
+                       String traceParent) {
 
         TaskEvent toAvro() {
 

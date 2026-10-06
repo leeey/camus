@@ -1,6 +1,7 @@
 package project.camus.kafka.consumer
 
 import static org.mockito.ArgumentMatchers.argThat
+import static org.mockito.Mockito.doAnswer
 import static org.mockito.Mockito.doThrow
 import static org.mockito.Mockito.timeout
 import static org.mockito.Mockito.verify
@@ -9,6 +10,7 @@ import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import io.micrometer.tracing.Tracer
 import java.time.Duration
 import java.time.Instant
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -39,6 +41,9 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     JdbcTemplate jdbcTemplate
+
+    @Autowired
+    Tracer tracer
 
     @MockitoSpyBean
     TaskEventUseCase taskEventUseCase
@@ -87,6 +92,29 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
         then:
         conditions.eventually {
             assert summary(taskId).deleted == true
+        }
+    }
+
+    def "consumer continues the producer trace from the traceparent header"() {
+
+        given:
+        def traceId = "0af7651916cd43dd8448eb211c80319c"
+        def taskId = nextTaskId()
+        def traced = event(taskId, TaskEventType.CREATED, "traced", false, Instant.now())
+        def observedTraceIds = []
+        doAnswer { invocation ->
+            observedTraceIds << tracer.currentSpan()?.context()?.traceId()
+            invocation.callRealMethod()
+        }.when(taskEventUseCase).process(argThat { TaskEvent e -> e != null && e.eventId == traced.eventId })
+        def record = new ProducerRecord<String, TaskEvent>(TOPIC, String.valueOf(taskId), traced)
+        record.headers().add("traceparent", "00-$traceId-b7ad6b7169203331-01".bytes)
+
+        when:
+        producer.send(record).get()
+
+        then:
+        conditions.eventually {
+            assert observedTraceIds == [traceId]
         }
     }
 

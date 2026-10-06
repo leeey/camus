@@ -56,6 +56,8 @@ public class TaskEventKafkaConfig {
         factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(props));
         factory.setConcurrency(properties.concurrency());
         factory.getContainerProperties().setAckMode(AckMode.RECORD);
+        // kafka 헤더의 traceparent 를 이어받아 producer 와 같은 trace 로 처리한다.
+        factory.getContainerProperties().setObservationEnabled(true);
         factory.setCommonErrorHandler(taskEventErrorHandler(kafkaProperties, properties));
         return factory;
     }

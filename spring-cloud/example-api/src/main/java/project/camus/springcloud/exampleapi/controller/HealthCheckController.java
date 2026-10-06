@@ -1,9 +1,12 @@
 package project.camus.springcloud.exampleapi.controller;
 
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +25,15 @@ public class HealthCheckController {
 
     private final Environment environment;
 
+    private final Tracer tracer;
+
     @Timed(value = "user.account.id", longTask = true)
     @GetMapping
     public ResponseEntity<SuccessResponse<Map<String, Object>>> healthCheck() {
 
         return ResponseWrapper.success(Map.of("status", "OK",
             "port", request.getServerPort(),
-            "trace-id", Objects.requireNonNullElse(request.getHeader("Trace-Id"), ""),
+            "trace-id", Optional.ofNullable(tracer.currentSpan()).map(Span::context).map(c -> c.traceId()).orElse(""),
             "version", Objects.requireNonNullElse(environment.getProperty("version"), "undefined")));
     }
 }

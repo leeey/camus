@@ -76,6 +76,31 @@ class TaskEventOutboxIntegrationTest extends IntegrationTestSupport {
         consumer?.close()
     }
 
+    def "request trace continues to the kafka record through the outbox"() {
+
+        given:
+        def traceId = "4bf92f3577b34da6a3ce929d0e0e4736"
+        def client = RestClient.builder().baseUrl("http://localhost:$port/v1/tasks").build()
+        def consumer = createConsumer()
+
+        when:
+        def taskId = client.post()
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("traceparent", "00-$traceId-00f067aa0ba902b7-01")
+            .body([title: "traced", content: "content", priorityType: "LOW"])
+            .retrieve()
+            .body(Map).result.task.id as Long
+        def records = pollUntil(consumer, 1) { it.value().taskId == taskId }
+
+        then: "outbox 에 요청의 traceparent 가 저장되고, kafka 헤더도 같은 traceId 로 이어진다"
+        jdbcTemplate.queryForObject("SELECT trace_parent FROM outbox_event WHERE aggregate_id = ?", String, taskId)
+            .startsWith("00-$traceId-")
+        new String(records.first().headers().lastHeader("traceparent").value()).startsWith("00-$traceId-")
+
+        cleanup:
+        consumer?.close()
+    }
+
     def "outbox event is rolled back together with the task"() {
 
         given:

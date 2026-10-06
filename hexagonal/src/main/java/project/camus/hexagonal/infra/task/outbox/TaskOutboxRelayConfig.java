@@ -1,5 +1,7 @@
 package project.camus.hexagonal.infra.task.outbox;
 
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +20,9 @@ public class TaskOutboxRelayConfig {
 
     @Bean
     public TaskOutboxRelay taskOutboxRelay(JdbcClient jdbcClient, KafkaTemplate<String, TaskEvent> kafkaTemplate,
-        OutboxProperties outboxProperties, KafkaTopicProperties topicProperties) {
+        OutboxProperties outboxProperties, KafkaTopicProperties topicProperties, Tracer tracer, Propagator propagator) {
 
-        return new TaskOutboxRelay(jdbcClient, kafkaTemplate, outboxProperties.relay(), topicProperties.taskEvents());
+        return new TaskOutboxRelay(jdbcClient, kafkaTemplate, outboxProperties.relay(), topicProperties.taskEvents(), tracer,
+            propagator);
     }
 }
