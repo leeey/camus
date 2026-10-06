@@ -176,6 +176,24 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 docker build -f docker/app.Dockerfile --build-arg JAR_FILE=<module>/build/libs/<app>.jar -t <image> .
 ```
 
+#### kubernetes
+
+```
+k8s/
+├── base/                 # auth-server, gateway, task-service(hexagonal), task-consumer
+│                         #   Deployment, Service, ConfigMap, PodDisruptionBudget, HPA(gateway, task-service), Ingress
+└── overlays/
+    ├── local/            # + postgresql, kafka(단일 브로커), schema registry, redis, 로컬 secret, replica 1, traefik
+    └── prod/             # 관리형 인프라 주소, 레지스트리, 도메인 (예시 값), otel collector, secret 은 외부에서 생성
+```
+
+- kubernetes 에서는 eureka, config server, cloud bus 를 끄고 service DNS(`http://task-service:8084` 등)와 ConfigMap/Secret 을 쓴다. 기존 spring cloud 구성은 로컬/VM 배포에서 그대로 쓸 수 있다.
+- actuator 는 관리 포트 8081 로 분리한다. startup/liveness/readiness probe 와 prometheus 수집(`prometheus.io/*` annotation)은 이 포트를 쓰고, ingress 로는 열지 않는다.
+- 종료: preStop 5초 대기 후 spring graceful shutdown (terminationGracePeriodSeconds 45).
+- 보안: non-root(uid 10001), readOnlyRootFilesystem(/tmp 는 emptyDir), capabilities drop ALL, seccomp RuntimeDefault, `enableServiceLinks: false`.
+- 자원: memory request 512Mi / limit 768Mi (힙은 한도의 75%), cpu limit 은 두지 않는다.
+- auth-server 의 issuer(`AUTH_ISSUER_URI`)는 클라이언트가 보는 외부 주소여야 하고, gateway 는 같은 값으로 iss 를 검증한다. 공개키(JWKS)는 클러스터 내부 주소로 가져온다.
+
 #### required environment variables
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
 - `AWS_KMS_KEY_ID` : batch, spring cloud config 에서 사용하는 AWS KMS key id

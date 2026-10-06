@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-consumer
+  labels:
+    app.kubernetes.io/name: task-consumer
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: task-consumer
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: task-consumer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: /actuator/prometheus
+    spec:
+      # graceful shutdown(spring 기본 30s) + preStop 대기보다 길게
+      terminationGracePeriodSeconds: 45
+      # service 이름으로 들어오는 환경변수(REDIS_PORT=tcp://... 등)가 애플리케이션 설정과 겹치지 않게 한다.
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: task-consumer
+          image: camus/task-consumer
+          ports:
+            - name: http
+              containerPort: 9091
+            - name: management
+              containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: task-consumer
+          env:
+            - name: TASK_VIEW_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: camus-secrets
+                  key: TASK_VIEW_DB_PASSWORD
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              # cpu limit 은 두지 않는다 (throttling). 힙은 메모리 한도의 75%.
+              memory: 768Mi
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: management
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: management
+            periodSeconds: 5
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              # 종료 전에 endpoint 에서 빠질 시간을 둔다 (그 사이 들어온 요청은 처리한다)
+              sleep:
+                seconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ "ALL" ]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: { }

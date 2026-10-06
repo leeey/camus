@@ -1,0 +1,74 @@
+# 로컬 kubernetes (colima k3s 등). 인프라(postgresql, kafka, schema registry, redis)를 함께 띄운다.
+#   ./docker/build-images.sh local
+#   kubectl apply -k k8s/overlays/local
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: camus
+resources:
+  - namespace.yaml
+  - ../../base
+  - infra/postgres.yaml
+  - infra/kafka.yaml
+  - infra/redis.yaml
+
+images:
+  - name: camus/auth-server
+    newTag: local
+  - name: camus/gateway
+    newTag: local
+  - name: camus/task-service
+    newTag: local
+  - name: camus/task-consumer
+    newTag: local
+
+# 로컬 전용 비밀 값. 운영에서는 external secrets 등으로 camus-secrets 를 만든다.
+secretGenerator:
+  - name: camus-secrets
+    literals:
+      - AUTH_DB_PASSWORD=camus
+      - TASK_DB_PASSWORD=camus
+      - TASK_VIEW_DB_PASSWORD=camus
+      # camus-service-secret / camus-web-secret
+      - AUTH_SERVICE_CLIENT_SECRET={bcrypt}$2y$10$ALR1zrNZyXsX8P9tJeTtg.Zxi5w6798bdaNr8u2cCFrWHdzfqFA2a
+      - AUTH_WEB_CLIENT_SECRET={bcrypt}$2y$10$PKo8dhBYbgDB0ObSMwsU2umyG2XkGsHp0vfIaAMAgi22YoYY0wDMS
+
+patches:
+  # 로컬은 1 개씩
+  - target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/part-of=camus
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      kind: HorizontalPodAutoscaler
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+  - target:
+      kind: Ingress
+      name: camus
+    patch: |-
+      - op: add
+        path: /spec/ingressClassName
+        value: traefik
+  # 브로커가 1 개라 복제 수를 1 로 줄인다.
+  - target:
+      kind: ConfigMap
+      name: task-service
+    patch: |-
+      - op: add
+        path: /data/CAMUS_KAFKA_TOPICS_TASKEVENTS_REPLICAS
+        value: "1"
+      - op: add
+        path: /data/CAMUS_KAFKA_TOPICS_TASKEVENTS_MININSYNCREPLICAS
+        value: "1"
+  - target:
+      kind: ConfigMap
+      name: task-consumer
+    patch: |-
+      - op: add
+        path: /data/CAMUS_KAFKA_TASKEVENTS_DLTREPLICAS
+        value: "1"

@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: camus
+spec:
+  # ingressClassName 은 overlay 에서 정한다 (local: traefik, 운영: 클라우드 LB 컨트롤러 등).
+  rules:
+    # 외부에는 gateway(API) 와 auth-server(로그인/토큰) 만 노출한다.
+    - host: api.localtest.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  name: http
+    - host: auth.localtest.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-server
+                port:
+                  name: http

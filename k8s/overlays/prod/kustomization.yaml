@@ -1,0 +1,107 @@
+# 운영 예시. 표시된 값(레지스트리, 도메인, 관리형 인프라 주소)은 환경에 맞게 바꿔 주세요.
+#
+# - 인프라는 관리형을 쓴다: postgresql(RDS 등), kafka(MSK 등), redis(ElastiCache 등)
+# - camus-secrets 는 이 저장소에 두지 않는다. external secrets operator 등으로 아래 키를 가진 Secret 을 만든다.
+#   AUTH_DB_PASSWORD, TASK_DB_PASSWORD, TASK_VIEW_DB_PASSWORD,
+#   AUTH_SERVICE_CLIENT_SECRET, AUTH_WEB_CLIENT_SECRET ({bcrypt}...), AUTH_SIGNING_PRIVATE_KEY (PKCS#8 PEM)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: camus
+resources:
+  - ../../base
+
+images:
+  - name: camus/auth-server
+    newName: registry.example.com/camus/auth-server   # 예시
+    newTag: "0.1.0"
+  - name: camus/gateway
+    newName: registry.example.com/camus/gateway       # 예시
+    newTag: "0.1.0"
+  - name: camus/task-service
+    newName: registry.example.com/camus/task-service  # 예시
+    newTag: "0.1.0"
+  - name: camus/task-consumer
+    newName: registry.example.com/camus/task-consumer # 예시
+    newTag: "0.1.0"
+
+patches:
+  - target:
+      kind: Ingress
+      name: camus
+    patch: |-
+      - op: add
+        path: /spec/ingressClassName
+        value: alb                                     # 예시 (aws load balancer controller)
+      - op: replace
+        path: /spec/rules/0/host
+        value: api.camus.example.com                   # 예시
+      - op: replace
+        path: /spec/rules/1/host
+        value: auth.camus.example.com                  # 예시
+  # auth-server 가 서명하는 iss 와 resource server 가 검증하는 issuer 는 외부 주소로 같아야 한다.
+  - target:
+      kind: ConfigMap
+      name: auth-server
+    patch: |-
+      - op: replace
+        path: /data/AUTH_ISSUER_URI
+        value: https://auth.camus.example.com
+      - op: replace
+        path: /data/AUTH_DB_URL
+        value: jdbc:postgresql://camus-auth.xxxx.ap-northeast-2.rds.amazonaws.com:5432/camus_auth   # 예시
+      - op: replace
+        path: /data/AUTH_WEB_REDIRECT_URIS
+        value: https://app.camus.example.com/login/oauth2/code/camus-web
+  - target:
+      kind: ConfigMap
+      name: gateway
+    patch: |-
+      - op: replace
+        path: /data/AUTH_ISSUER_URI
+        value: https://auth.camus.example.com
+      - op: replace
+        path: /data/REDIS_HOST
+        value: camus-redis.xxxx.cache.amazonaws.com                                              # 예시
+  - target:
+      kind: ConfigMap
+      name: task-service
+    patch: |-
+      - op: replace
+        path: /data/TASK_DB_URL
+        value: jdbc:postgresql://camus-task.xxxx.ap-northeast-2.rds.amazonaws.com:5432/camus      # 예시
+      - op: replace
+        path: /data/KAFKA_BOOTSTRAP_SERVERS
+        value: b-1.camus.xxxx.kafka.ap-northeast-2.amazonaws.com:9092                            # 예시
+      - op: replace
+        path: /data/SCHEMA_REGISTRY_URL
+        value: http://schema-registry.camus-infra:8081                                            # 예시
+  - target:
+      kind: ConfigMap
+      name: task-consumer
+    patch: |-
+      - op: replace
+        path: /data/TASK_VIEW_DB_URL
+        value: jdbc:postgresql://camus-task-view.xxxx.ap-northeast-2.rds.amazonaws.com:5432/camus_task_view   # 예시
+      - op: replace
+        path: /data/KAFKA_BOOTSTRAP_SERVERS
+        value: b-1.camus.xxxx.kafka.ap-northeast-2.amazonaws.com:9092                            # 예시
+      - op: replace
+        path: /data/SCHEMA_REGISTRY_URL
+        value: http://schema-registry.camus-infra:8081                                            # 예시
+  # trace/로그는 클러스터의 otel collector 로 보낸다.
+  - target:
+      kind: ConfigMap
+      labelSelector: app.kubernetes.io/part-of=camus
+    patch: |-
+      - op: add
+        path: /data/OTEL_TRACES_EXPORT_ENABLED
+        value: "true"
+      - op: add
+        path: /data/OTEL_LOGS_EXPORT_ENABLED
+        value: "true"
+      - op: add
+        path: /data/OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://otel-collector.observability:4318/v1/traces                                  # 예시
+      - op: add
+        path: /data/OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
+        value: http://otel-collector.observability:4318/v1/logs                                    # 예시
