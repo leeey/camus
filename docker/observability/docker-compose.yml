@@ -1,0 +1,73 @@
+# 관측 스택: `docker compose --profile observability up -d`
+# - otel collector (OTLP 4317/4318) → tempo(trace), loki(log)
+# - prometheus (지표 수집, 알림 규칙) 9090
+# - grafana 3000 (admin / ${GRAFANA_ADMIN_PASSWORD:-admin})
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    container_name: camus-otel-collector
+    profiles: [ observability ]
+    command: [ "--config=/etc/otelcol/config.yaml" ]
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    depends_on:
+      - tempo
+      - loki
+
+  tempo:
+    image: grafana/tempo:3.1.0
+    container_name: camus-tempo
+    profiles: [ observability ]
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo.yaml:/etc/tempo.yaml:ro
+      - camus-tempo:/var/tempo
+    ports:
+      - "3200:3200"
+
+  loki:
+    image: grafana/loki:3.7.2
+    container_name: camus-loki
+    profiles: [ observability ]
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    container_name: camus-prometheus
+    profiles: [ observability ]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    container_name: camus-grafana
+    profiles: [ observability ]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+
+volumes:
+  camus-tempo:

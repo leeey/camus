@@ -2,8 +2,10 @@
 # - postgresql: camus(task 서비스), camus_task_view(consumer)
 # - kafka: broker 3 + schema registry + rest proxy
 # - redis: gateway rate limit
+# - 관측 스택(otel collector, tempo, loki, prometheus, grafana)은 `--profile observability` 로 띄운다
 include:
   - kafka/docker-compose.yml
+  - docker/observability/docker-compose.yml
 
 services:
   postgres:

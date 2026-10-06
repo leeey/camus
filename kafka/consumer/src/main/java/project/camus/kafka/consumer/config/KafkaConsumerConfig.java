@@ -49,6 +49,8 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, GenericRecord> factory =
             new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        // task-events listener 와 같은 observation 기반 지표를 쓴다. (방식이 섞이면 같은 이름의 지표 태그가 달라 prometheus 등록이 실패한다)
+        factory.getContainerProperties().setObservationEnabled(true);
         return factory;
     }
 }

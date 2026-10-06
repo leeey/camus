@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.micrometer.metrics.autoconfigure.MeterRegistryCustomizer;
@@ -18,6 +19,8 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration
 public class CamusObservabilityAutoConfiguration {
+
+    static final Set<String> HISTOGRAM_METERS = Set.of("http.server.requests", "http.client.requests");
 
     @Bean
     public MeterRegistryCustomizer<MeterRegistry> camusApplicationTag(
@@ -34,7 +37,7 @@ public class CamusObservabilityAutoConfiguration {
             @Override
             public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
 
-                if (id.getName().equals("http.server.requests") || id.getName().equals("http.client.requests")) {
+                if (HISTOGRAM_METERS.contains(id.getName())) {
                     return DistributionStatisticConfig.builder()
                         .percentilesHistogram(true)
                         .build()

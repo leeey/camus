@@ -1,0 +1,51 @@
+groups:
+  - name: camus
+    rules:
+      - alert: InstanceDown
+        expr: up{job="camus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }} 지표를 수집할 수 없습니다"
+
+      - alert: HighErrorRate
+        expr: |
+          sum by (application) (rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+            / sum by (application) (rate(http_server_requests_seconds_count[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.application }} 5xx 비율이 5% 를 넘었습니다"
+
+      - alert: CircuitBreakerOpen
+        expr: max by (application, name) (resilience4j_circuitbreaker_state{state="open"}) == 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.application }} circuit breaker {{ $labels.name }} 가 열려 있습니다"
+
+      - alert: OutboxBacklog
+        expr: max by (application) (outbox_events_pending) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.application }} outbox 미발행 이벤트가 쌓이고 있습니다 (relay 또는 kafka 확인)"
+
+      - alert: DeadLetterEvents
+        expr: sum by (application) (increase(task_events_dead_letter_total[5m])) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.application }} 가 이벤트를 DLT 로 보냈습니다"
+
+      - alert: ConsumerLag
+        expr: max by (application) (kafka_consumer_fetch_manager_records_lag_max) > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.application }} consumer lag 이 1000 을 넘었습니다"

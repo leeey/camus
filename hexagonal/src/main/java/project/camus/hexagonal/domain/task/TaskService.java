@@ -29,6 +29,7 @@ public class TaskService {
 
         TaskEntity created = taskAdapter.createTask(entity);
         taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.CREATED, created));
+        log.info("task created. id={}", created.getId());
         return MAPPER.toPortDto(created);
     }
 
@@ -43,6 +44,7 @@ public class TaskService {
         TaskEntity entity = findTaskById(id);
         taskAdapter.delete(entity);
         taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.DELETED, entity));
+        log.info("task deleted. id={}", id);
     }
 
     public TaskPortDto archiveTaskById(Long id) {
@@ -50,6 +52,7 @@ public class TaskService {
         TaskEntity entity = findTaskById(id);
         TaskEntity archived = taskAdapter.updateTask(entity.toBuilder().archived(true).build());
         taskEventPort.append(TaskDomainEvent.of(TaskDomainEvent.Type.ARCHIVED, archived));
+        log.info("task archived. id={}", id);
         return MAPPER.toPortDto(archived);
     }
 

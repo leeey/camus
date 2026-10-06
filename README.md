@@ -112,6 +112,22 @@ docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from ta
 - **로그** : traceId/spanId 가 로그에 함께 남는다. `LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs` 면 JSON(ECS) 으로 출력하고, `OTEL_LOGS_EXPORT_ENABLED=true` 면 OTLP 로도 보낸다.
 - **샘플링** : 기본은 전부(1.0) 수집한다. 운영에서는 `TRACING_SAMPLING_PROBABILITY` 를 낮추거나 collector 에서 tail sampling 을 쓴다.
 
+관측 스택 (로컬)
+
+```shell
+# 인프라 + otel collector(4317/4318), tempo(3200), loki(3100), prometheus(9090), grafana(3000)
+docker compose --profile observability up -d
+
+# 애플리케이션은 trace/로그 export 를 켜고 실행한다
+export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
+```
+
+- grafana (`admin` / `GRAFANA_ADMIN_PASSWORD`, 기본 `admin`) → `camus` 폴더의 `camus overview` 대시보드
+  - 요청 수·5xx 비율·p95 지연, circuit breaker, outbox, consumer 처리·lag, DLT, 로그
+  - 로그의 traceId → tempo trace, trace 의 span → 같은 traceId 의 로그로 이동
+- prometheus 알림 규칙 (`docker/observability/prometheus/alert-rules.yml`) : InstanceDown, HighErrorRate, CircuitBreakerOpen, OutboxBacklog, DeadLetterEvents, ConsumerLag
+  - 알림 전송(alertmanager, slack 등)은 환경에 맞게 붙인다.
+
 #### required environment variables
 - `JWT_TOKEN_SECRET` : jwt (webmvc, webflux) token signing secret (256 bit 이상 랜덤 값)
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)

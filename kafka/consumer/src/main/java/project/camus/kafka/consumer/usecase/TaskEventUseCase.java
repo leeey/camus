@@ -82,6 +82,8 @@ public class TaskEventUseCase {
             .param("occurredAt", Timestamp.from(event.getOccurredAt()))
             .update();
         applied.increment();
+        log.info("task event applied. eventId={}, type={}, taskId={}", event.getEventId(), event.getEventType(),
+            event.getTaskId());
         return true;
     }
 }

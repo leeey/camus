@@ -1,0 +1,19 @@
+# 로컬에서는 애플리케이션을 호스트에서 실행하므로 host.docker.internal 로 수집한다.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alert-rules.yml
+
+scrape_configs:
+  - job_name: camus
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - host.docker.internal:8000   # gateway
+          - host.docker.internal:8084   # hexagonal (task 서비스)
+          - host.docker.internal:9091   # kafka consumer
+          - host.docker.internal:9000   # observability mashup
+          - host.docker.internal:9001   # observability member
+          - host.docker.internal:9002   # observability task

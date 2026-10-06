@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: camus
+    folder: camus
+    type: file
+    disableDeletion: true
+    options:
+      path: /var/lib/grafana/dashboards
