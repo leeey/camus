@@ -1,14 +1,13 @@
 plugins {
     id 'groovy'
     id 'project.camus.library-webmvc-conventions'
-    id 'project.camus.tracing-conventions'
+    id 'project.camus.observability-conventions'
 }
 
 dependencies {
     implementation project(':common')
     implementation project(':common:common-webmvc')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 test {

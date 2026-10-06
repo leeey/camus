@@ -1,9 +1,0 @@
-// opentelemetry 기반 분산 추적 (micrometer tracing otel bridge + otlp exporter)
-plugins {
-    id 'java'
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
-}

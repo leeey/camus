@@ -43,6 +43,8 @@ public class TaskOutboxRelay {
 
     private final Propagator propagator;
 
+    private final OutboxMetrics metrics;
+
     @Transactional
     @Scheduled(fixedDelayString = "${camus.outbox.relay.fixed-delay:1s}")
     public void relay() {
@@ -94,14 +96,17 @@ public class TaskOutboxRelay {
         try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
             kafkaTemplate.send(topic.name(), String.valueOf(event.aggregateId()), event.toAvro())
                 .get(properties.sendTimeout().toMillis(), TimeUnit.MILLISECONDS);
+            metrics.published();
             return true;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             span.error(e);
+            metrics.failed();
             return false;
         } catch (Exception e) {
             log.warn("failed to publish outbox event. id={}, eventId={}", event.id(), event.eventId(), e);
             span.error(e);
+            metrics.failed();
             return false;
         } finally {
             span.end();

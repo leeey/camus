@@ -1,0 +1,14 @@
+// 관측성 공통 구성
+// - 분산 추적: micrometer tracing otel bridge + otlp exporter
+// - 지표: /actuator/prometheus
+// - 로그: OTLP export (management.logging.export.otlp.enabled=true 일 때), 공통 태그/histogram (common-observability)
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation project(':common:common-observability')
+}

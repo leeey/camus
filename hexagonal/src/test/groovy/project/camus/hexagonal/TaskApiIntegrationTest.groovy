@@ -24,6 +24,20 @@ class TaskApiIntegrationTest extends IntegrationTestSupport {
             .build()
     }
 
+    def "prometheus endpoint exposes application tag, http histogram and outbox metrics"() {
+
+        given:
+        client.get().retrieve().toBodilessEntity()
+
+        when:
+        def body = RestClient.create("http://localhost:$port").get().uri("/actuator/prometheus").retrieve().body(String)
+
+        then:
+        body.contains('application="hexagonal"')
+        body.contains("http_server_requests_seconds_bucket")
+        body.contains("outbox_events_pending")
+    }
+
     def "flyway migration is applied"() {
 
         expect:

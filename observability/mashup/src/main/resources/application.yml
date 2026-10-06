@@ -73,11 +73,20 @@ management:
       export:
         otlp:
           endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:http://localhost:4318/v1/logs}
   otlp:
     metrics:
       export:
         # 지표는 /actuator/prometheus 로 수집한다.
         enabled: false
+  logging:
+    export:
+      otlp:
+        # true 면 로그를 OTLP 로도 보낸다 (traceId/spanId 포함).
+        enabled: ${OTEL_LOGS_EXPORT_ENABLED:false}
   endpoints:
     web:
       exposure:
@@ -85,12 +94,3 @@ management:
   health:
     circuitbreakers:
       enabled: true
-  metrics:
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: true
-logging:
-  pattern:
-    level: '%5p {applicationName: ${spring.application.name:}, traceId: %X{traceId:-}, spanId: %X{spanId:-}}'

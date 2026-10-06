@@ -98,6 +98,20 @@ docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from ta
 - redis 가 응답하지 않으면 rate limiter 는 요청을 통과시킨다 (fail open).
 - 동시 호출 수 제한이 필요하면 resilience4j bulkhead 를 추가한다.
 
+#### observability (관측성)
+
+`project.camus.observability-conventions` 를 적용한 서비스(gateway, example-api, hexagonal, kafka consumer, observability 3종)는 같은 방식으로 trace, 지표, 로그를 남긴다.
+
+- **trace** : W3C `traceparent` 로 전파한다. outbox 에 요청의 traceparent 를 저장해 relay 가 이어 붙이므로 요청 → kafka → consumer 가 하나의 trace 가 된다. gateway 응답 헤더 `Trace-Id` 로 traceId 를 확인할 수 있다.
+- **지표** : `/actuator/prometheus` (모든 지표에 `application` 태그, http 요청 지연 histogram)
+  - `outbox_events_pending` : 아직 발행하지 않은 outbox 이벤트 수
+  - `outbox_events_published_total{result=success|failure}` : outbox 발행 결과
+  - `task_events_processed_total{result=applied|duplicate}` : consumer 처리 결과
+  - `task_events_dead_letter_total` : DLT 로 보낸 이벤트 수
+  - `kafka_consumer_fetch_manager_records_lag_max` : consumer lag
+- **로그** : traceId/spanId 가 로그에 함께 남는다. `LOGGING_STRUCTURED_FORMAT_CONSOLE=ecs` 면 JSON(ECS) 으로 출력하고, `OTEL_LOGS_EXPORT_ENABLED=true` 면 OTLP 로도 보낸다.
+- **샘플링** : 기본은 전부(1.0) 수집한다. 운영에서는 `TRACING_SAMPLING_PROBABILITY` 를 낮추거나 collector 에서 tail sampling 을 쓴다.
+
 #### required environment variables
 - `JWT_TOKEN_SECRET` : jwt (webmvc, webflux) token signing secret (256 bit 이상 랜덤 값)
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
@@ -110,3 +124,7 @@ docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from ta
 - `TASK_SERVICE_URI` : gateway 의 task 서비스 주소 (기본값 `lb://HEXAGONAL`, kubernetes 는 `http://hexagonal:8084` 처럼 service 주소)
 - `REDIS_HOST`, `REDIS_PORT` : gateway rate limit 용 redis (기본값 `localhost`, `6379`)
 - `GATEWAY_RATE_LIMIT_REPLENISH_RATE`, `GATEWAY_RATE_LIMIT_BURST_CAPACITY` : 클라이언트별 초당 보충 토큰 수와 최대 버스트 (기본값 `10`, `20`)
+- `OTEL_TRACES_EXPORT_ENABLED`, `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` : trace OTLP export 여부와 주소 (기본값 `false`, `http://localhost:4318/v1/traces`)
+- `OTEL_LOGS_EXPORT_ENABLED`, `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` : 로그 OTLP export 여부와 주소 (기본값 `false`, `http://localhost:4318/v1/logs`)
+- `TRACING_SAMPLING_PROBABILITY` : trace 샘플링 비율 (기본값 `1.0`)
+- `LOGGING_STRUCTURED_FORMAT_CONSOLE` : 콘솔 로그 형식 (`ecs`, `logstash`, `gelf` 중 하나면 JSON)

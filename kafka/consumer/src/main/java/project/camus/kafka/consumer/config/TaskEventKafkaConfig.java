@@ -3,10 +3,13 @@ package project.camus.kafka.consumer.config;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
@@ -22,9 +25,11 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.kafka.listener.RetryListener;
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import project.camus.event.task.TaskEvent;
@@ -40,7 +45,7 @@ public class TaskEventKafkaConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, TaskEvent> taskEventListenerContainerFactory(
-        KafkaProperties kafkaProperties, TaskEventKafkaProperties properties) {
+        KafkaProperties kafkaProperties, TaskEventKafkaProperties properties, MeterRegistry meterRegistry) {
 
         Map<String, Object> props = new LinkedHashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, properties.groupId());
@@ -52,13 +57,17 @@ public class TaskEventKafkaConfig {
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer.class);
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
+        DefaultKafkaConsumerFactory<String, TaskEvent> consumerFactory = new DefaultKafkaConsumerFactory<>(props);
+        // kafka client 지표 (records-lag-max 등) 를 micrometer 에 등록한다.
+        consumerFactory.addListener(new MicrometerConsumerListener<>(meterRegistry));
+
         ConcurrentKafkaListenerContainerFactory<String, TaskEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(props));
+        factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(properties.concurrency());
         factory.getContainerProperties().setAckMode(AckMode.RECORD);
         // kafka 헤더의 traceparent 를 이어받아 producer 와 같은 trace 로 처리한다.
         factory.getContainerProperties().setObservationEnabled(true);
-        factory.setCommonErrorHandler(taskEventErrorHandler(kafkaProperties, properties));
+        factory.setCommonErrorHandler(taskEventErrorHandler(kafkaProperties, properties, meterRegistry));
         return factory;
     }
 
@@ -72,7 +81,8 @@ public class TaskEventKafkaConfig {
             .build();
     }
 
-    private DefaultErrorHandler taskEventErrorHandler(KafkaProperties kafkaProperties, TaskEventKafkaProperties properties) {
+    private DefaultErrorHandler taskEventErrorHandler(KafkaProperties kafkaProperties, TaskEventKafkaProperties properties,
+        MeterRegistry meterRegistry) {
 
         // 역직렬화에 실패한 레코드는 원본 byte[] 로, 처리에 실패한 레코드는 avro 로 DLT 에 보낸다.
         Map<Class<?>, KafkaOperations<?, ?>> templates = new LinkedHashMap<>();
@@ -86,7 +96,24 @@ public class TaskEventKafkaConfig {
         backOff.setInitialInterval(properties.retry().initialInterval().toMillis());
         backOff.setMultiplier(properties.retry().multiplier());
 
-        return new DefaultErrorHandler(recoverer, backOff);
+        Counter deadLettered = Counter.builder("task.events.dead.letter")
+            .description("task events sent to the DLT")
+            .register(meterRegistry);
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, backOff);
+        errorHandler.setRetryListeners(new RetryListener() {
+
+            @Override
+            public void failedDelivery(ConsumerRecord<?, ?> record, Exception ex, int deliveryAttempt) {
+
+            }
+
+            @Override
+            public void recovered(ConsumerRecord<?, ?> record, Exception ex) {
+
+                deadLettered.increment();
+            }
+        });
+        return errorHandler;
     }
 
     private KafkaTemplate<String, Object> dltTemplate(KafkaProperties kafkaProperties, Class<?> valueSerializer) {

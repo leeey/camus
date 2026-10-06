@@ -4,6 +4,8 @@ include 'common:webmvc'
 findProject(':common:webmvc')?.name = 'common-webmvc'
 include 'common:webflux'
 findProject(':common:webflux')?.name = 'common-webflux'
+include 'common:observability'
+findProject(':common:observability')?.name = 'common-observability'
 
 include 'database'
 include 'database:jpa'

@@ -28,6 +28,10 @@ camus:
         initial-interval: 1s
         multiplier: 2.0
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
   tracing:
     sampling:
       probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
@@ -42,8 +46,17 @@ management:
       export:
         otlp:
           endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:http://localhost:4318/v1/logs}
   otlp:
     metrics:
       export:
         # 지표는 /actuator/prometheus 로 수집한다.
         enabled: false
+  logging:
+    export:
+      otlp:
+        # true 면 로그를 OTLP 로도 보낸다 (traceId/spanId 포함).
+        enabled: ${OTEL_LOGS_EXPORT_ENABLED:false}

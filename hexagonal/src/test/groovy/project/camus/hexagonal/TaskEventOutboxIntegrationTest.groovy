@@ -3,6 +3,7 @@ package project.camus.hexagonal
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
+import io.micrometer.core.instrument.MeterRegistry
 import java.time.Duration
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -22,6 +23,7 @@ import project.camus.event.task.TaskEventType
 import project.camus.hexagonal.domain.task.TaskService
 import project.camus.hexagonal.domain.task.event.TaskDomainEvent
 import project.camus.hexagonal.domain.task.event.TaskEventPort
+import spock.util.concurrent.PollingConditions
 
 class TaskEventOutboxIntegrationTest extends IntegrationTestSupport {
 
@@ -39,6 +41,9 @@ class TaskEventOutboxIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     TaskEventPort taskEventPort
+
+    @Autowired
+    MeterRegistry meterRegistry
 
     def "task changes are published to task-events in order through the outbox"() {
 
@@ -99,6 +104,23 @@ class TaskEventOutboxIntegrationTest extends IntegrationTestSupport {
 
         cleanup:
         consumer?.close()
+    }
+
+    def "outbox metrics count published events and pending backlog"() {
+
+        given:
+        def publishedBefore = meterRegistry.get("outbox.events.published").tag("result", "success").counter().count()
+
+        when:
+        transactionTemplate.execute {
+            taskService.createTask(TaskEntity.builder().title("metrics").priority(1).build())
+        }
+
+        then:
+        new PollingConditions(timeout: 30).eventually {
+            assert meterRegistry.get("outbox.events.published").tag("result", "success").counter().count() > publishedBefore
+            assert meterRegistry.get("outbox.events.pending").gauge().value() == 0
+        }
     }
 
     def "outbox event is rolled back together with the task"() {

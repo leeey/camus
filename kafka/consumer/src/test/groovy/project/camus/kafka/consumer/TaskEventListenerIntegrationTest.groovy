@@ -10,6 +10,7 @@ import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.tracing.Tracer
 import java.time.Duration
 import java.time.Instant
@@ -44,6 +45,9 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     Tracer tracer
+
+    @Autowired
+    MeterRegistry meterRegistry
 
     @MockitoSpyBean
     TaskEventUseCase taskEventUseCase
@@ -127,6 +131,7 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
         conditions.eventually {
             assert summary(taskId)?.title == "original"
         }
+        def duplicatedBefore = counter("task.events.processed", "result", "duplicate")
         // 같은 이벤트가 다시 반영되면 title 이 original 로 돌아간다.
         jdbcTemplate.update("UPDATE task_summary SET title = 'changed' WHERE task_id = ?", taskId)
 
@@ -136,6 +141,7 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
         then:
         verifyProcessed(created, 2)
         summary(taskId).title == "changed"
+        counter("task.events.processed", "result", "duplicate") == duplicatedBefore + 1
         jdbcTemplate.queryForObject("SELECT count(*) FROM processed_event WHERE event_id = ?::uuid", Integer,
             created.eventId) == 1
     }
@@ -167,6 +173,7 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
         doThrow(new IllegalStateException("boom"))
             .when(taskEventUseCase).process(argThat { TaskEvent e -> e != null && e.eventId == failing.eventId })
         def dltConsumer = dltConsumer(KafkaAvroDeserializer)
+        def deadLetteredBefore = meterRegistry.get("task.events.dead.letter").counter().count()
 
         when:
         send(failing)
@@ -177,6 +184,9 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
         dltRecords.size() == 1
         header(dltRecords.first(), KafkaHeaders.DLT_EXCEPTION_MESSAGE).contains("boom")
         header(dltRecords.first(), KafkaHeaders.DLT_ORIGINAL_TOPIC) == TOPIC
+        conditions.eventually {
+            assert meterRegistry.get("task.events.dead.letter").counter().count() >= deadLetteredBefore + 1
+        }
 
         and: "next event on the topic is still processed"
         def nextTaskId = nextTaskId()
@@ -218,6 +228,11 @@ class TaskEventListenerIntegrationTest extends IntegrationTestSupport {
     private void verifyProcessed(TaskEvent event, int count) {
 
         verify(taskEventUseCase, timeout(10_000).times(count)).process(argThat { TaskEvent e -> e?.eventId == event.eventId })
+    }
+
+    private double counter(String name, String tagKey, String tagValue) {
+
+        meterRegistry.get(name).tag(tagKey, tagValue).counter().count()
     }
 
     private static long taskIdSequence = System.currentTimeMillis()

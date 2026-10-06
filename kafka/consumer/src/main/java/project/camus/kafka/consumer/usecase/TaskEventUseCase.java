@@ -1,8 +1,9 @@
 package project.camus.kafka.consumer.usecase;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.sql.Timestamp;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
@@ -17,10 +18,26 @@ import project.camus.event.task.TaskEventType;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TaskEventUseCase {
 
     private final JdbcClient jdbcClient;
+
+    private final Counter applied;
+
+    private final Counter duplicated;
+
+    public TaskEventUseCase(JdbcClient jdbcClient, MeterRegistry meterRegistry) {
+
+        this.jdbcClient = jdbcClient;
+        this.applied = Counter.builder("task.events.processed")
+            .description("task events processed by the consumer")
+            .tag("result", "applied")
+            .register(meterRegistry);
+        this.duplicated = Counter.builder("task.events.processed")
+            .description("task events processed by the consumer")
+            .tag("result", "duplicate")
+            .register(meterRegistry);
+    }
 
     /**
      * @return 처음 처리한 이벤트면 true, 이미 처리한 이벤트면 false
@@ -38,6 +55,7 @@ public class TaskEventUseCase {
             .update();
         if (inserted == 0) {
             log.info("skip duplicated task event. eventId={}", event.getEventId());
+            duplicated.increment();
             return false;
         }
 
@@ -63,6 +81,7 @@ public class TaskEventUseCase {
             .param("deleted", event.getEventType() == TaskEventType.DELETED)
             .param("occurredAt", Timestamp.from(event.getOccurredAt()))
             .update();
+        applied.increment();
         return true;
     }
 }
