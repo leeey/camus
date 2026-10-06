@@ -85,6 +85,27 @@ curl -X POST localhost:8000/task-service/v1/tasks -H 'Content-Type: application/
 docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from task_summary'
 ```
 
+#### auth-server (spring authorization server)
+
+OAuth2 / OIDC 인증 서버 (포트 9400). access token 은 RS256 JWT 이고, resource server 는 공개키(JWKS)만으로 검증한다.
+
+| client | grant | 용도 |
+|---|---|---|
+| `camus-web` | authorization code + PKCE, refresh token | 사용자 로그인 (secret 을 가진 서버(BFF) 가 토큰을 다룬다) |
+| `camus-service` | client credentials | 서비스 간 호출 |
+
+- 엔드포인트 : `/.well-known/openid-configuration`, `/oauth2/authorize`, `/oauth2/token`, `/oauth2/jwks`, `/oauth2/revoke`, `/oauth2/introspect`, `/userinfo`
+- access token 15분 (서비스 토큰 5분), refresh token 은 한 번 쓰면 새로 발급하고 이미 쓴 토큰은 거절한다.
+- 발급한 인가 정보는 PostgreSQL(`camus_auth`) 에 저장해 인스턴스를 여러 개 띄울 수 있다.
+- 서명 키는 `AUTH_SIGNING_PRIVATE_KEY`(PKCS#8 PEM) 로 넣는다. 비어 있으면 기동할 때마다 임시 키를 만든다 (로컬 전용). 키를 바꿀 때는 `AUTH_SIGNING_KEY_ID` 도 바꾼다.
+- 사용자(`camus.auth.users`)와 클라이언트는 설정으로 등록한 예시다. 운영에서는 사용자 DB 나 외부 IdP 로 바꾼다.
+- 기존 postgresql volume 에는 `camus_auth` 데이터베이스가 없으므로 `docker compose down -v` 후 다시 띄우거나 직접 만든다.
+
+```shell
+# 서비스 토큰 (client credentials, 로컬 기본 secret)
+curl -u camus-service:camus-service-secret -d grant_type=client_credentials -d scope=task.read localhost:9400/oauth2/token
+```
+
 #### resilience (장애 대응)
 
 | 위치 | timeout | retry | circuit breaker | 그 밖에 |
@@ -137,6 +158,11 @@ export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 - `TASK_VIEW_DB_URL`, `TASK_VIEW_DB_USERNAME`, `TASK_VIEW_DB_PASSWORD` : kafka consumer 조회용 PostgreSQL 접속 정보 (기본값 `jdbc:postgresql://localhost:15432/camus_task_view`, `camus`/`camus`)
 - `KAFKA_BOOTSTRAP_SERVERS`, `SCHEMA_REGISTRY_URL` : kafka 접속 정보 (기본값 `localhost:9092,localhost:9093,localhost:9094`, `http://localhost:8081`)
 - `EUREKA_ENABLED`, `EUREKA_URL` : hexagonal 의 eureka 등록 여부와 주소 (기본값 `true`, `http://127.0.0.1:8761/eureka`)
+- `AUTH_ISSUER_URI` : auth-server issuer (기본값 `http://localhost:9400`)
+- `AUTH_SIGNING_PRIVATE_KEY`, `AUTH_SIGNING_KEY_ID` : access token 서명 키 (PKCS#8 PEM) 와 kid
+- `AUTH_SERVICE_CLIENT_SECRET`, `AUTH_WEB_CLIENT_SECRET` : 클라이언트 secret (`{bcrypt}...`, 로컬 기본값은 `camus-service-secret`, `camus-web-secret`)
+- `AUTH_WEB_REDIRECT_URIS` : camus-web redirect uri
+- `AUTH_DB_URL`, `AUTH_DB_USERNAME`, `AUTH_DB_PASSWORD` : auth-server PostgreSQL (기본값 `jdbc:postgresql://localhost:15432/camus_auth`, `camus`/`camus`)
 - `TASK_SERVICE_URI` : gateway 의 task 서비스 주소 (기본값 `lb://HEXAGONAL`, kubernetes 는 `http://hexagonal:8084` 처럼 service 주소)
 - `REDIS_HOST`, `REDIS_PORT` : gateway rate limit 용 redis (기본값 `localhost`, `6379`)
 - `GATEWAY_RATE_LIMIT_REPLENISH_RATE`, `GATEWAY_RATE_LIMIT_BURST_CAPACITY` : 클라이언트별 초당 보충 토큰 수와 최대 버스트 (기본값 `10`, `20`)

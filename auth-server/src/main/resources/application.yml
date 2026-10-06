@@ -1,0 +1,89 @@
+server:
+  port: 9400
+  error:
+    include-stacktrace: never
+spring:
+  application:
+    name: auth-server
+  datasource:
+    url: ${AUTH_DB_URL:jdbc:postgresql://localhost:15432/camus_auth}
+    username: ${AUTH_DB_USERNAME:camus}
+    password: ${AUTH_DB_PASSWORD:camus}
+  flyway:
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      authorizationserver:
+        # 토큰의 iss. resource server 는 이 주소의 /.well-known/openid-configuration 으로 공개키(JWKS)를 찾는다.
+        issuer: ${AUTH_ISSUER_URI:http://localhost:9400}
+        client:
+          # 사용자 로그인용 클라이언트 (authorization code + PKCE).
+          # secret 을 가진 서버(BFF)가 토큰을 다룬다. 공개 클라이언트(secret 없음)에는 refresh token 이 발급되지 않는다.
+          camus-web:
+            registration:
+              client-id: camus-web
+              # 로컬 기본값은 camus-web-secret. 운영에서는 반드시 AUTH_WEB_CLIENT_SECRET 으로 바꿔 주세요.
+              client-secret: ${AUTH_WEB_CLIENT_SECRET:{bcrypt}$2y$10$PKo8dhBYbgDB0ObSMwsU2umyG2XkGsHp0vfIaAMAgi22YoYY0wDMS}
+              client-authentication-methods: client_secret_basic
+              authorization-grant-types: authorization_code, refresh_token
+              redirect-uris: ${AUTH_WEB_REDIRECT_URIS:http://127.0.0.1:8080/login/oauth2/code/camus-web}
+              scopes: openid, profile, task.read, task.write
+            require-proof-key: true
+            require-authorization-consent: false
+            token:
+              access-token-time-to-live: 15m
+              refresh-token-time-to-live: 8h
+              # refresh token 은 한 번 쓰면 새로 발급한다 (rotation).
+              reuse-refresh-tokens: false
+          # 서비스 간 호출용 클라이언트 (client credentials)
+          camus-service:
+            registration:
+              client-id: camus-service
+              # 로컬 기본값은 camus-service-secret. 운영에서는 반드시 AUTH_SERVICE_CLIENT_SECRET 으로 바꿔 주세요.
+              client-secret: ${AUTH_SERVICE_CLIENT_SECRET:{bcrypt}$2y$10$ALR1zrNZyXsX8P9tJeTtg.Zxi5w6798bdaNr8u2cCFrWHdzfqFA2a}
+              client-authentication-methods: client_secret_basic
+              authorization-grant-types: client_credentials
+              scopes: task.read, task.write
+            token:
+              access-token-time-to-live: 5m
+camus:
+  auth:
+    signing-key:
+      key-id: ${AUTH_SIGNING_KEY_ID:camus-local}
+      # PKCS#8 PEM. 비어 있으면 기동할 때마다 임시 키를 만든다 (로컬 전용).
+      private-key: ${AUTH_SIGNING_PRIVATE_KEY:}
+    users:
+      # 로컬 예시 사용자 camus / camus. 운영에서는 사용자 DB 나 외부 IdP 로 바꿔 주세요.
+      - username: camus
+        password: '{bcrypt}$2y$10$bnyMzth9nBS.ZS6IAhdcFuQUHZH.PS9uZt7c4lKA4pp978NNcY062'
+        roles: USER
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  tracing:
+    sampling:
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    propagation:
+      type: w3c
+    export:
+      otlp:
+        enabled: ${OTEL_TRACES_EXPORT_ENABLED:false}
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:http://localhost:4318/v1/traces}
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:http://localhost:4318/v1/logs}
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  logging:
+    export:
+      otlp:
+        enabled: ${OTEL_LOGS_EXPORT_ENABLED:false}

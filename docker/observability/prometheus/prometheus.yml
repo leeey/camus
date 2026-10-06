@@ -17,3 +17,4 @@ scrape_configs:
           - host.docker.internal:9000   # observability mashup
           - host.docker.internal:9001   # observability member
           - host.docker.internal:9002   # observability task
+          - host.docker.internal:9400   # auth-server

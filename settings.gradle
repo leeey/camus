@@ -19,6 +19,7 @@ findProject(':database:graphql')?.name = 'database-graphql'
 
 include 'webflux'
 include 'hexagonal'
+include 'auth-server'
 
 include 'spring-cloud'
 include 'spring-cloud:service-discovery'
