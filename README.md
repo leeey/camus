@@ -68,7 +68,7 @@ client ─▶ gateway ─▶ task 서비스(hexagonal) ─┬─ task         �
 로컬 실행
 
 ```shell
-# 1. 인프라 (postgresql 15432, kafka 9092~9094, schema registry 8081)
+# 1. 인프라 (postgresql 15432, kafka 9092~9094, schema registry 8081, redis 6379)
 docker compose up -d
 
 # 2. 애플리케이션 (각각 별도 터미널)
@@ -85,6 +85,19 @@ curl -X POST localhost:8000/task-service/v1/tasks -H 'Content-Type: application/
 docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from task_summary'
 ```
 
+#### resilience (장애 대응)
+
+| 위치 | timeout | retry | circuit breaker | 그 밖에 |
+|---|---|---|---|---|
+| gateway → 하위 서비스 | connect 2s, response 5s | GET 만 2회 (502/503/504, 연결 오류) | 라우트별, 열리면 503 fallback | 클라이언트 IP 별 rate limit (redis, 초과 시 429) |
+| mashup → member, task (feign) | connect 1s, read 2s | 3회 (5xx, 연결 오류/timeout), 지수 백오프 + jitter | 실패율·느린 호출 50% 초과 시 open 10s | task 장애 시 부분 응답 (`degraded: true`) |
+
+- 4xx 는 요청 오류라서 재시도하지 않고 circuit breaker 실패로도 세지 않는다.
+- 재시도는 한 곳에서만 한다 (feign 자체 재시도는 끈다). 여러 층에서 재시도하면 횟수가 곱해진다.
+- gateway 에서 rate limit 은 라우트의 첫 필터로 둔다. 재시도보다 뒤에 두면 gateway 의 재시도까지 클라이언트 토큰을 쓴다.
+- redis 가 응답하지 않으면 rate limiter 는 요청을 통과시킨다 (fail open).
+- 동시 호출 수 제한이 필요하면 resilience4j bulkhead 를 추가한다.
+
 #### required environment variables
 - `JWT_TOKEN_SECRET` : jwt (webmvc, webflux) token signing secret (256 bit 이상 랜덤 값)
 - `KEY_STORE_LOCATION` : spring cloud config 암호화 keystore 경로 (기본값 `file:.keystore/camusConfigEncKey.jks`, git 추적 제외)
@@ -94,3 +107,6 @@ docker exec camus-postgres psql -U camus -d camus_task_view -c 'select * from ta
 - `TASK_VIEW_DB_URL`, `TASK_VIEW_DB_USERNAME`, `TASK_VIEW_DB_PASSWORD` : kafka consumer 조회용 PostgreSQL 접속 정보 (기본값 `jdbc:postgresql://localhost:15432/camus_task_view`, `camus`/`camus`)
 - `KAFKA_BOOTSTRAP_SERVERS`, `SCHEMA_REGISTRY_URL` : kafka 접속 정보 (기본값 `localhost:9092,localhost:9093,localhost:9094`, `http://localhost:8081`)
 - `EUREKA_ENABLED`, `EUREKA_URL` : hexagonal 의 eureka 등록 여부와 주소 (기본값 `true`, `http://127.0.0.1:8761/eureka`)
+- `TASK_SERVICE_URI` : gateway 의 task 서비스 주소 (기본값 `lb://HEXAGONAL`, kubernetes 는 `http://hexagonal:8084` 처럼 service 주소)
+- `REDIS_HOST`, `REDIS_PORT` : gateway rate limit 용 redis (기본값 `localhost`, `6379`)
+- `GATEWAY_RATE_LIMIT_REPLENISH_RATE`, `GATEWAY_RATE_LIMIT_BURST_CAPACITY` : 클라이언트별 초당 보충 토큰 수와 최대 버스트 (기본값 `10`, `20`)

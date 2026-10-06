@@ -1,6 +1,7 @@
 # 참조 흐름(gateway → task 서비스 → outbox → kafka → consumer) 로컬 인프라
 # - postgresql: camus(task 서비스), camus_task_view(consumer)
 # - kafka: broker 3 + schema registry + rest proxy
+# - redis: gateway rate limit
 include:
   - kafka/docker-compose.yml
 
@@ -22,6 +23,17 @@ services:
     volumes:
       - camus-postgres:/var/lib/postgresql
       - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: camus-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   camus-postgres:

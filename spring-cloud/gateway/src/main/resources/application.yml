@@ -7,6 +7,9 @@ spring:
     gateway:
       server:
         webflux:
+          httpclient:
+            connect-timeout: 2000
+            response-timeout: 5s
           default-filters:
             - name: GlobalFilter
               args:
@@ -33,21 +36,76 @@ spring:
           routes:
             # task 서비스 (hexagonal): /task-service/v1/tasks/** -> /v1/tasks/**
             - id: task-service
-              uri: lb://HEXAGONAL
+              uri: ${TASK_SERVICE_URI:lb://HEXAGONAL}
               predicates:
                 - Path=/task-service/**
+              filters:
+                # 순서: rate limit → circuit breaker → retry
+                # rate limit 을 default-filters 에 두면 retry 보다 뒤에 실행되어 gateway 의 재시도까지 클라이언트 토큰을 쓰므로, 라우트의 첫 필터로 둔다.
+                # 클라이언트 IP 별 토큰 버킷 (redis). 초과하면 429
+                - &rate-limiter
+                  name: RequestRateLimiter
+                  args:
+                    key-resolver: '#{@clientIpKeyResolver}'
+                    redis-rate-limiter.replenishRate: ${GATEWAY_RATE_LIMIT_REPLENISH_RATE:10}
+                    redis-rate-limiter.burstCapacity: ${GATEWAY_RATE_LIMIT_BURST_CAPACITY:20}
+                    redis-rate-limiter.requestedTokens: 1
+                # circuit breaker 는 재시도까지 실패한 요청을 1건으로 기록한다. 재시도는 GET 만.
+                - name: CircuitBreaker
+                  args:
+                    name: task-service
+                    fallbackUri: forward:/fallback/task-service
+                    statusCodes:
+                      - 500
+                      - 502
+                      - 503
+                      - 504
+                - name: Retry
+                  args:
+                    retries: 2
+                    methods: GET
+                    statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT
+                    exceptions: java.io.IOException, java.util.concurrent.TimeoutException
+                    backoff:
+                      firstBackoff: 50ms
+                      maxBackoff: 500ms
+                      factor: 2
+                      basedOnPreviousValue: false
             - id: example-api
               uri: lb://EXAMPLE-API
               predicates:
                 - Path=/example-api/**
+              filters:
+                - *rate-limiter
             - id: example-api
               uri: lb://EXAMPLE-API
               predicates:
                 - Path=/example-api/actuator/**
                 - Method=GET,POST
               filters:
+                - *rate-limiter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/example-api/(?<path>.*), /$\{path}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+  timelimiter:
+    configs:
+      default:
+        # 기본값 1s 는 httpclient response-timeout(5s) 보다 짧아 정상 요청도 끊으므로 맞춘다.
+        timeout-duration: 6s
 eureka:
   client:
     register-with-eureka: true
