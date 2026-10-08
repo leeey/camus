@@ -154,7 +154,10 @@ docker compose --profile observability up -d
 export OTEL_TRACES_EXPORT_ENABLED=true OTEL_LOGS_EXPORT_ENABLED=true
 ```
 
-- grafana (`admin` / `GRAFANA_ADMIN_PASSWORD`, 기본 `admin`) → `camus` 폴더의 `camus overview` 대시보드
+- grafana (`admin` / `GRAFANA_ADMIN_PASSWORD`, 기본 `admin`, 포트는 `GRAFANA_PORT` 로 바꿀 수 있다) → `camus` 폴더의 `camus overview` 대시보드
+  - 대시보드는 `docker/observability/grafana/dashboards/<폴더>/*.json` 이고 디렉터리가 grafana 폴더가 된다
+  - `camus` 폴더에는 grafana.com 템플릿도 있다: `Spring Boot Observability`(17175, 로그 패널은 OTLP 로그에 맞게 고침), `Spring Boot 3.x Statistics`(19004)
+  - `iandbook` 폴더는 운영 AWS(CloudWatch · X-Ray)를 본다. 읽기 전용 IAM 키를 `docker/observability/.env` 에 둬야 한다(커밋하지 않음)
   - 요청 수·5xx 비율·p95 지연, circuit breaker, outbox, consumer 처리·lag, DLT, 로그
   - 로그의 traceId → tempo trace, trace 의 span → 같은 traceId 의 로그로 이동
 - prometheus 알림 규칙 (`docker/observability/prometheus/alert-rules.yml`) : InstanceDown, HighErrorRate, CircuitBreakerOpen, OutboxBacklog, DeadLetterEvents, ConsumerLag
