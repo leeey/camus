@@ -377,6 +377,239 @@
       }
     },
     {
+      "id": 10,
+      "type": "timeseries",
+      "title": "DB 연결 풀 (HikariCP, 최대 10)",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 8,
+        "h": 8
+      },
+      "description": "active: 쿼리 중, idle: 놀고 있는 연결, pending: 연결을 기다리는 요청(0보다 크면 풀이 모자람).",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "hikaricp_connections_active",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Maximum",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "사용 중(active)"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "hikaricp_connections_idle",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Average",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "대기(idle)"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "hikaricp_connections_pending",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Maximum",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "기다리는 요청(pending)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "JVM 힙 사용량",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 15,
+        "w": 8,
+        "h": 8
+      },
+      "description": "힙 영역(Eden·Survivor·Old)의 합. 컨테이너 메모리 한도 1GB, 힙은 그 75%.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "jvm_memory_used_bytes",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Sum",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "힙 사용량"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "스레드 · 프로세스 CPU",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 15,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "jvm_threads_live_threads",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Average",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "스레드 수"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2/app",
+          "metricName": "process_cpu_usage",
+          "dimensions": {
+            "application": "iandbook-admin-v2"
+          },
+          "statistic": "Average",
+          "period": "60",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "프로세스 CPU"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "프로세스 CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "id": 6,
       "title": "최근 trace (X-Ray, iandbook-admin-v2) — id 를 누르면 trace 가 열린다",
       "type": "table",
@@ -386,7 +619,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 15,
+        "y": 23,
         "w": 24,
         "h": 8
       },
@@ -414,7 +647,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 23,
+        "y": 31,
         "w": 24,
         "h": 8
       },
@@ -451,7 +684,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 31,
+        "y": 39,
         "w": 24,
         "h": 9
       },
@@ -489,7 +722,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 40,
+        "y": 48,
         "w": 24,
         "h": 10
       },
