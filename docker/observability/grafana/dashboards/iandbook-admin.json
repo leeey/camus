@@ -1,0 +1,551 @@
+{
+  "uid": "iandbook-admin",
+  "title": "iandbook admin (AWS)",
+  "tags": [
+    "iandbook",
+    "aws"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "",
+  "editable": true,
+  "templating": {
+    "list": [
+      {
+        "name": "trace_id",
+        "label": "Trace-Id",
+        "type": "textbox",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        }
+      }
+    ]
+  },
+  "description": "iandbook-admin-v2 (운영 AWS). 지표·로그는 CloudWatch, trace 는 X-Ray. 데이터 소스 키는 docker/observability/.env.",
+  "panels": [
+    {
+      "id": 1,
+      "title": "트래픽: v2 vs 레거시 (요청 수)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2",
+          "metricName": "Requests",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "v2 요청"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "AWS/ApplicationELB",
+          "metricName": "RequestCount",
+          "dimensions": {
+            "LoadBalancer": "app/admin-iandbook/88ec783f51d08b67"
+          },
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "레거시 요청 (스캐너 포함)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "v2 응답 오류와 ERROR 로그",
+      "type": "timeseries",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2",
+          "metricName": "Responses5xx",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "5xx"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2",
+          "metricName": "Responses4xx",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "4xx"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2",
+          "metricName": "Errors",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "ERROR 로그"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "title": "v2 로그인 성공",
+      "type": "timeseries",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "iandbook/v2",
+          "metricName": "SignIns",
+          "dimensions": {},
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "로그인"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "title": "CloudFront (v2 앞단)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 8,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-1",
+          "namespace": "AWS/CloudFront",
+          "metricName": "Requests",
+          "dimensions": {
+            "DistributionId": "E3U5DA41OVL0G4",
+            "Region": "Global"
+          },
+          "statistic": "Sum",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "요청"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "us-east-1",
+          "namespace": "AWS/CloudFront",
+          "metricName": "5xxErrorRate",
+          "dimensions": {
+            "DistributionId": "E3U5DA41OVL0G4",
+            "Region": "Global"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "5xx 비율(%)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "title": "EC2 CPU · RDS 연결",
+      "type": "timeseries",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 8,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "AWS/EC2",
+          "metricName": "CPUUtilization",
+          "dimensions": {
+            "InstanceId": "i-0ea0245533824e316"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "EC2 CPU(%)"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Metrics",
+          "metricQueryType": 0,
+          "metricEditorMode": 0,
+          "region": "default",
+          "namespace": "AWS/RDS",
+          "metricName": "DatabaseConnections",
+          "dimensions": {
+            "DBInstanceIdentifier": "leeey"
+          },
+          "statistic": "Average",
+          "period": "300",
+          "matchExact": true,
+          "id": "",
+          "expression": "",
+          "label": "RDS 연결 (saguatt 포함)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "title": "최근 trace (X-Ray, iandbook-admin-v2) — id 를 누르면 trace 가 열린다",
+      "type": "table",
+      "datasource": {
+        "type": "grafana-x-ray-datasource",
+        "uid": "xray"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-x-ray-datasource",
+            "uid": "xray"
+          },
+          "queryType": "getTraceSummaries",
+          "query": "service(\"iandbook-admin-v2\")",
+          "region": "default",
+          "columns": []
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "최근 v2 오류 (5xx 응답과 ERROR 로그)",
+      "type": "table",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Logs",
+          "region": "default",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:ap-northeast-2:823624329122:log-group:/iandbook/v2:*",
+              "name": "/iandbook/v2"
+            }
+          ],
+          "logGroupNames": [
+            "/iandbook/v2"
+          ],
+          "expression": "fields @timestamp, @message | filter @message like /status=5|ERROR \\[/ | sort @timestamp desc | limit 50",
+          "statsGroups": []
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "화면별 사용량과 응답 시간",
+      "type": "table",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Logs",
+          "region": "default",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:ap-northeast-2:823624329122:log-group:/iandbook/v2:*",
+              "name": "/iandbook/v2"
+            }
+          ],
+          "logGroupNames": [
+            "/iandbook/v2"
+          ],
+          "expression": "filter @message like /request method=/ | parse @message 'method=* path=* status=* ms=* user=*' as method, path, status, ms, user | stats count(*) as requests, avg(ms) as avg_ms, pct(ms, 95) as p95_ms, max(ms) as max_ms, count_distinct(user) as users by method, path | sort requests desc | limit 30",
+          "statsGroups": []
+        }
+      ],
+      "description": "p95_ms: 요청을 빠른 순으로 세웠을 때 95% 지점의 응답 시간(20번 중 1번은 이보다 느림)."
+    },
+    {
+      "id": 9,
+      "title": "Trace-Id 로 요청 찾기 (위 Trace-Id 칸에 응답 헤더 값을 넣는다. xray 칸을 누르면 X-Ray trace 가 열린다)",
+      "type": "table",
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "queryMode": "Logs",
+          "region": "default",
+          "logGroups": [
+            {
+              "arn": "arn:aws:logs:ap-northeast-2:823624329122:log-group:/iandbook/v2/otel:*",
+              "name": "/iandbook/v2/otel"
+            }
+          ],
+          "logGroupNames": [
+            "/iandbook/v2/otel"
+          ],
+          "expression": "fields @timestamp, severity_text, body, scope.name, span_id, concat('1-', substr(trace_id, 0, 8), '-', substr(trace_id, 8)) as xray | filter trace_id = '$trace_id' | sort @timestamp asc | limit 200",
+          "statsGroups": []
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "xray"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "X-Ray trace 열기",
+                    "url": "",
+                    "internal": {
+                      "datasourceUid": "xray",
+                      "datasourceName": "X-Ray",
+                      "query": {
+                        "queryType": "getTrace",
+                        "query": "${__value.raw}",
+                        "region": "default"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

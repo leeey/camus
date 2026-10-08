@@ -44,3 +44,6 @@ kafka/data/
 *.jks
 *.p12
 .env
+
+### observability: grafana 의 AWS 읽기 전용 키 (커밋하지 않는다) ###
+docker/observability/.env

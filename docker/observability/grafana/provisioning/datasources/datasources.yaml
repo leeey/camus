@@ -40,3 +40,26 @@ datasources:
           matcherRegex: trace_id
           datasourceUid: tempo
           url: '$${__value.raw}'
+
+  # iandbook — 운영 AWS(ap-northeast-2)의 CloudWatch 지표 · Logs Insights 와 X-Ray trace.
+  # 키는 읽기 전용 IAM 사용자 grafana-camus-readonly 의 것이다(.env).
+  - name: CloudWatch
+    uid: cloudwatch
+    type: cloudwatch
+    jsonData:
+      authType: keys
+      defaultRegion: ap-northeast-2
+      tracingDatasourceUid: xray
+    secureJsonData:
+      accessKey: $GRAFANA_AWS_ACCESS_KEY_ID
+      secretKey: $GRAFANA_AWS_SECRET_ACCESS_KEY
+
+  - name: X-Ray
+    uid: xray
+    type: grafana-x-ray-datasource
+    jsonData:
+      authType: keys
+      defaultRegion: ap-northeast-2
+    secureJsonData:
+      accessKey: $GRAFANA_AWS_ACCESS_KEY_ID
+      secretKey: $GRAFANA_AWS_SECRET_ACCESS_KEY

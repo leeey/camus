@@ -59,11 +59,18 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_AUTH_ANONYMOUS_ENABLED: "false"
+      # iandbook(운영 AWS) 지표·로그·trace 를 보는 CloudWatch · X-Ray 데이터 소스용.
+      # 읽기 전용 IAM 사용자 grafana-camus-readonly 의 키를 .env(커밋하지 않음)에 둔다. 없으면 그 데이터 소스만 쓸 수 없다.
+      # 데이터 소스를 등록하기 전에 설치를 마치도록 동기 설치한다.
+      GF_PLUGINS_PREINSTALL_SYNC: grafana-x-ray-datasource
+      GRAFANA_AWS_ACCESS_KEY_ID: ${GRAFANA_AWS_ACCESS_KEY_ID:-}
+      GRAFANA_AWS_SECRET_ACCESS_KEY: ${GRAFANA_AWS_SECRET_ACCESS_KEY:-}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
-      - "3000:3000"
+      # 3000 이 다른 앱과 겹치면 GRAFANA_PORT 로 바꾼다.
+      - "${GRAFANA_PORT:-3000}:3000"
     depends_on:
       - prometheus
       - tempo
