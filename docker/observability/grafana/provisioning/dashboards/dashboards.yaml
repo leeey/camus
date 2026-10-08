@@ -1,9 +1,10 @@
 apiVersion: 1
 
 providers:
-  - name: camus
-    folder: camus
+  # dashboards/<폴더>/*.json → grafana 의 <폴더> 폴더 (camus, iandbook)
+  - name: dashboards
     type: file
     disableDeletion: true
     options:
       path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
