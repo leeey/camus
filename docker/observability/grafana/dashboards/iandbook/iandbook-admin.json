@@ -31,7 +31,7 @@
   "panels": [
     {
       "id": 1,
-      "title": "트래픽: v2 vs 레거시 (요청 수)",
+      "title": "트래픽: v2 API · 관리자 웹 (요청 수)",
       "type": "timeseries",
       "datasource": {
         "type": "cloudwatch",
@@ -74,17 +74,17 @@
           "metricQueryType": 0,
           "metricEditorMode": 0,
           "region": "default",
-          "namespace": "AWS/ApplicationELB",
-          "metricName": "RequestCount",
+          "namespace": "AWS/AmplifyHosting",
+          "metricName": "Requests",
           "dimensions": {
-            "LoadBalancer": "app/admin-iandbook/88ec783f51d08b67"
+            "App": "d3dx8k511vy3t0"
           },
           "statistic": "Sum",
           "period": "300",
           "matchExact": true,
           "id": "",
           "expression": "",
-          "label": "레거시 요청 (스캐너 포함)"
+          "label": "관리자 웹 요청 (화면 · 파일, admin.iandbook.co.kr)"
         }
       ],
       "fieldConfig": {
