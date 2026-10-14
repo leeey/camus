@@ -4,12 +4,20 @@ plugins {
     id 'maven-publish'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'checkstyle'
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+checkstyle {
+    toolVersion = '10.26.1'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = false
+    maxWarnings = 0
 }
 
 repositories {
